@@ -317,6 +317,12 @@ function render() {
     ? `${ordered.length} videos — page ${currentPage} of ${totalPages}`
     : 'No videos added yet';
 
+  const pageJumpInput = document.getElementById('pageJumpInput');
+  if (document.activeElement !== pageJumpInput) {
+    pageJumpInput.value = currentPage;
+  }
+  pageJumpInput.max = totalPages;
+
   if (ordered.length === 0) {
     grid.innerHTML = '<div class="empty-note">No videos added yet. Edit <code>videos-data.json</code> and add your YouTube links to see them here.</div>';
     renderPagination(0);
@@ -483,7 +489,11 @@ document.getElementById('pageJumpForm').addEventListener('submit', (e) => {
   if (!p || isNaN(p)) return;
   p = Math.min(Math.max(p, 1), totalPagesGlobal);
   goToPage(p);
-  input.value = '';
+  input.blur();
+});
+
+document.getElementById('pageJumpInput').addEventListener('focus', (e) => {
+  e.target.select();
 });
 
 fetch('videos-data.json')
