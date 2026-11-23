@@ -378,11 +378,8 @@ function goToPage(p) {
 
 function updateUrlPage(p) {
   const url = new URL(window.location.href);
-  if (p > 1) {
-    url.searchParams.set('page', p);
-  } else {
-    url.searchParams.delete('page');
-  }
+  url.searchParams.delete('page');
+  url.pathname = (p > 1) ? '/v/' + p : '/';
   window.history.replaceState({ page: p }, '', url);
 }
 
@@ -513,7 +510,10 @@ document.getElementById('pageJumpInput').addEventListener('blur', (e) => {
 });
 
 function readPageFromUrl() {
-  const p = parseInt(new URL(window.location.href).searchParams.get('page'), 10);
+  const url = new URL(window.location.href);
+  // Support the clean path form (/v/22) and the old query form (?page=22)
+  const pathMatch = url.pathname.match(/^\/v\/(\d+)\/?$/);
+  const p = pathMatch ? parseInt(pathMatch[1], 10) : parseInt(url.searchParams.get('page'), 10);
   return (p && p > 0) ? p : 1;
 }
 
