@@ -167,9 +167,54 @@
     color: var(--text-dim);
     font-size: 12px;
   }
+  .link-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+  }
+  .link-bar.show { display: flex; }
+  .link-bar input {
+    flex: 1;
+    min-width: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .link-bar button {
+    background: var(--accent);
+    color: #1a1a1a;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .link-bar .close-btn {
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 16px;
+    padding: 4px 8px;
+  }
 </style>
 </head>
 <body>
+
+<div class="link-bar" id="linkBar">
+  <input type="text" id="linkBarInput" readonly>
+  <button id="linkBarCopy">Copy</button>
+  <button class="close-btn" id="linkBarClose">✕</button>
+</div>
 
 <header>
   <h1>Zeewaqar Husnain</h1>
@@ -234,10 +279,13 @@ function render() {
     } else {
       embed.innerHTML = `<a href="${v.url}" target="_blank" style="color:#d9b35b;display:flex;align-items:center;justify-content:center;height:100%;">Watch on YouTube →</a>`;
     }
+    embed.addEventListener('click', () => showLinkBar(v.url), { capture: true });
     card.appendChild(embed);
     const meta = document.createElement('div');
     meta.className = 'meta';
     meta.innerHTML = `<h3>${v.title}</h3><p>${new Date(v.date).toLocaleDateString()}</p>`;
+    meta.style.cursor = 'pointer';
+    meta.addEventListener('click', () => showLinkBar(v.url));
     card.appendChild(meta);
     grid.appendChild(card);
   });
@@ -304,6 +352,30 @@ document.getElementById('sortOldest').addEventListener('click', () => {
   document.getElementById('sortOldest').classList.add('active');
   document.getElementById('sortNewest').classList.remove('active');
   render();
+});
+
+function showLinkBar(url) {
+  const bar = document.getElementById('linkBar');
+  const input = document.getElementById('linkBarInput');
+  input.value = url;
+  bar.classList.add('show');
+  input.focus();
+  input.select();
+}
+
+document.getElementById('linkBarCopy').addEventListener('click', () => {
+  const input = document.getElementById('linkBarInput');
+  input.select();
+  navigator.clipboard?.writeText(input.value).catch(() => {});
+  document.execCommand && document.execCommand('copy');
+  const btn = document.getElementById('linkBarCopy');
+  const original = btn.textContent;
+  btn.textContent = 'Copied!';
+  setTimeout(() => { btn.textContent = original; }, 1200);
+});
+
+document.getElementById('linkBarClose').addEventListener('click', () => {
+  document.getElementById('linkBar').classList.remove('show');
 });
 
 document.getElementById('pageJumpForm').addEventListener('submit', (e) => {
