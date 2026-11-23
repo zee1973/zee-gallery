@@ -168,6 +168,41 @@
   .lightbox .prev { left: 16px; }
   .lightbox .next { right: 16px; }
 
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    max-width: 900px;
+    margin: 24px auto 40px;
+    padding: 0 24px;
+  }
+  .pagination button {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text);
+    min-width: 36px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .pagination button.active {
+    background: var(--accent);
+    color: #1a1a1a;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .pagination button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .pagination .ellipsis {
+    color: var(--text-dim);
+    padding: 8px 4px;
+    font-size: 13px;
+  }
+
   footer {
     text-align: center;
     padding: 40px 20px 60px;
@@ -191,6 +226,7 @@
 </header>
 
 <main class="gallery" id="gallery"></main>
+<nav class="pagination" id="pagination"></nav>
 
 <div class="lightbox" id="lightbox">
   <button class="close" id="lbClose">&times;</button>
@@ -207,6 +243,8 @@ let data = [];
 let currentOrder = [];
 let sortDesc = true; // newest first by default
 let currentIndex = 0;
+let currentPage = 1;
+const PAGE_SIZE = 40;
 
 function cleanTitle(title) {
   // Strip "zeewaqar_" prefix and Midjourney-style job params / uuid tails for readability
@@ -222,9 +260,20 @@ function render() {
   const gallery = document.getElementById('gallery');
   gallery.innerHTML = '';
   currentOrder = [...data].sort((a, b) => sortDesc ? b.mtime - a.mtime : a.mtime - b.mtime);
-  document.getElementById('countLabel').textContent = `${currentOrder.length} pieces`;
 
-  currentOrder.forEach((item, idx) => {
+  const totalPages = Math.max(1, Math.ceil(currentOrder.length / PAGE_SIZE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  document.getElementById('countLabel').textContent = currentOrder.length
+    ? `${currentOrder.length} pieces — page ${currentPage} of ${totalPages}`
+    : 'No images yet';
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = currentOrder.slice(start, start + PAGE_SIZE);
+
+  pageItems.forEach((item, pageIdx) => {
+    const idx = start + pageIdx; // index into the full sorted set, for the lightbox
     const div = document.createElement('div');
     div.className = 'item';
     const img = document.createElement('img');
@@ -241,6 +290,53 @@ function render() {
     div.addEventListener('click', () => openLightbox(idx));
     gallery.appendChild(div);
   });
+
+  renderPagination(totalPages);
+}
+
+function goToPage(p) {
+  currentPage = p;
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderPagination(totalPages) {
+  const nav = document.getElementById('pagination');
+  nav.innerHTML = '';
+  if (totalPages <= 1) return;
+
+  const addBtn = (label, page, opts = {}) => {
+    const btn = document.createElement('button');
+    btn.textContent = label;
+    if (opts.active) btn.classList.add('active');
+    if (opts.disabled) btn.disabled = true;
+    btn.addEventListener('click', () => goToPage(page));
+    nav.appendChild(btn);
+  };
+  const addEllipsis = () => {
+    const span = document.createElement('span');
+    span.className = 'ellipsis';
+    span.textContent = '…';
+    nav.appendChild(span);
+  };
+
+  addBtn('← Prev', currentPage - 1, { disabled: currentPage === 1 });
+
+  const windowSize = 2;
+  const pagesToShow = new Set([1, totalPages]);
+  for (let p = currentPage - windowSize; p <= currentPage + windowSize; p++) {
+    if (p >= 1 && p <= totalPages) pagesToShow.add(p);
+  }
+  const sorted = [...pagesToShow].sort((a, b) => a - b);
+
+  let prev = null;
+  sorted.forEach(p => {
+    if (prev !== null && p - prev > 1) addEllipsis();
+    addBtn(String(p), p, { active: p === currentPage });
+    prev = p;
+  });
+
+  addBtn('Next →', currentPage + 1, { disabled: currentPage === totalPages });
 }
 
 function openLightbox(idx) {
@@ -279,12 +375,14 @@ document.addEventListener('keydown', (e) => {
 
 document.getElementById('sortNewest').addEventListener('click', () => {
   sortDesc = true;
+  currentPage = 1;
   document.getElementById('sortNewest').classList.add('active');
   document.getElementById('sortOldest').classList.remove('active');
   render();
 });
 document.getElementById('sortOldest').addEventListener('click', () => {
   sortDesc = false;
+  currentPage = 1;
   document.getElementById('sortOldest').classList.add('active');
   document.getElementById('sortNewest').classList.remove('active');
   render();
