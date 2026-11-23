@@ -165,6 +165,12 @@
     border-color: var(--accent);
     font-weight: 600;
   }
+  .inactive-group button.active {
+    background: var(--bg-elevated);
+    color: var(--text-dim);
+    border-color: var(--border);
+    font-weight: 400;
+  }
   .pagination button:disabled {
     opacity: 0.35;
     cursor: default;
@@ -438,9 +444,10 @@ function updateUrlPage(p) {
   window.history.replaceState({ page: p }, '', url);
 }
 
-function renderPaginationInto(nav, totalPages, page, onPageClick) {
+function renderPaginationInto(nav, totalPages, page, onPageClick, isLive) {
   nav.innerHTML = '';
   if (totalPages <= 1) return;
+  nav.classList.toggle('inactive-group', isLive === false);
 
   const addBtn = (label, p, opts = {}) => {
     const btn = document.createElement('button');
@@ -495,9 +502,9 @@ function renderPagination(totalPages) {
       } else {
         goToPage(p);
       }
-    });
+    }, cat === categoryFilter);
   });
-  renderPaginationInto(document.getElementById('pagination'), totalPages, currentPage, goToPage);
+  renderPaginationInto(document.getElementById('pagination'), totalPages, currentPage, goToPage, true);
 }
 
 function setCatAndSort(cat, newSortDesc, targetPage) {
