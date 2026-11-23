@@ -85,6 +85,39 @@
   @media (max-width: 600px) {
     th:nth-child(3), td:nth-child(3) { display: none; }
   }
+  .more-nav {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 20px 36px;
+    text-align: center;
+  }
+  .more-nav h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin: 0 0 14px;
+    font-weight: 700;
+  }
+  .more-nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .more-nav-links a {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 12.5px;
+    font-weight: 600;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .more-nav-links a:hover { border-color: #f0c419; color: #f0c419; }
   footer {
     text-align: center;
     padding: 40px 20px 60px;
@@ -139,6 +172,18 @@
 
   <div class="callout">
     <strong>Pattern worth noting:</strong> Pakistan (PK) shows up as a top-3 market across nearly every keyword in both topics — from "ancient egypt" to "ai video generator." That lines up with where a meaningful share of this channel's own audience comes from, suggesting the content and the demand are genuinely aligned.
+  </div>
+</div>
+
+<div class="more-nav">
+  <h3>More from this channel</h3>
+  <div class="more-nav-links">
+    <a href="about.html">About this channel</a>
+    <a href="stats.html">Channel growth</a>
+    <a href="top-videos.html">Fan favorites</a>
+    <a href="timeline.html">Content timeline</a>
+    <a href="random-spotlight.html">Random spotlight</a>
+    <a href="ai-filmmaking.html">How AI filmmaking works</a>
   </div>
 </div>
 

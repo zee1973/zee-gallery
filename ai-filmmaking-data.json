@@ -1,0 +1,139 @@
+{
+  "consumption": {
+    "sourceLabel": "Kapwing AI Slop Report, Oct 2025 data (top 100 trending YouTube channels per country)",
+    "byViews": [
+      { "country": "South Korea", "code": "KR", "views": 8450000000, "channels": 11 },
+      { "country": "Pakistan", "code": "PK", "views": 5340000000, "channels": 20 },
+      { "country": "United States", "code": "US", "views": 3390000000, "channels": 9 },
+      { "country": "Egypt", "code": "EG", "views": 3240000000, "channels": 14 },
+      { "country": "Spain", "code": "ES", "views": 2520000000, "channels": 8 }
+    ],
+    "bySubscribers": [
+      { "country": "Spain", "code": "ES", "subscribers": 20220000 },
+      { "country": "Egypt", "code": "EG", "subscribers": 17900000 },
+      { "country": "United States", "code": "US", "subscribers": 14470000 },
+      { "country": "Brazil", "code": "BR", "subscribers": 12560000 }
+    ],
+    "channelsPerCountry": [
+      { "country": "Pakistan", "code": "PK", "channels": 20 },
+      { "country": "Egypt", "code": "EG", "channels": 14 },
+      { "country": "South Korea", "code": "KR", "channels": 11 },
+      { "country": "United States", "code": "US", "channels": 9 },
+      { "country": "Spain", "code": "ES", "channels": 8 }
+    ],
+    "globalTotals": {
+      "channelsAnalyzed": 15000,
+      "aiSlopChannelsFound": 278,
+      "combinedViews": 63000000000,
+      "combinedSubscribers": 221000000,
+      "annualRevenueEstimate": 117000000,
+      "shareOfNewUserFeed": 0.21,
+      "shareBrainrotOrAiOfFeed": 0.33,
+      "topEarningChannelsAnnual": 33600000
+    },
+    "topChannel": {
+      "name": "Bandar Apna Dost",
+      "country": "India",
+      "views": 2070000000,
+      "subscribers": 2760000,
+      "annualEarningsUsd": 4251500,
+      "theme": "AI-animated monkey in dramatic/comedic human-style scenes"
+    }
+  },
+  "production": {
+    "sourceLabel": "Higgsfield AI global film competition, March 2026 — 8,752 submissions from 139 countries, $500,000 prize pool",
+    "bySubmissions": [
+      { "country": "India", "code": "IN", "submissions": 1805 },
+      { "country": "United States", "code": "US", "submissions": 1041 },
+      { "country": "Germany", "code": "DE", "submissions": 278 },
+      { "country": "France", "code": "FR", "submissions": 230 },
+      { "country": "Italy", "code": "IT", "submissions": 228 },
+      { "country": "Brazil", "code": "BR", "submissions": 212 },
+      { "country": "United Kingdom", "code": "GB", "submissions": 196 }
+    ],
+    "totalCountries": 139,
+    "totalSubmissions": 8752,
+    "prizePool": 500000,
+    "note": "Entry pattern repeated strongly across Latin America, Southeast Asia and Eastern Europe — regions once locked out of high-end VFX production by studio infrastructure costs."
+  },
+  "searchDemand": {
+    "sourceLabel": "vidIQ keyword research, global monthly search volume",
+    "keywords": [
+      { "keyword": "ai video", "monthlySearch": 49924240, "topMarkets": "IN 27%, PK 18%, BD 17%" },
+      { "keyword": "higgsfield", "monthlySearch": 21947728, "topMarkets": "US 9%, BR 9%, IN 7%" },
+      { "keyword": "ai video generator", "monthlySearch": 8540105, "topMarkets": "IN 18%, PK 13%, BD 12%" },
+      { "keyword": "free ai video generator", "monthlySearch": 4809982, "topMarkets": "IN 28%, PK 14%, BD 10%" },
+      { "keyword": "ai film", "monthlySearch": 4442941, "topMarkets": "PK 19%, VN 11%, US 10%" },
+      { "keyword": "ai video editing", "monthlySearch": 5389496, "topMarkets": "IN 24%, US 15%, BD 12%" },
+      { "keyword": "short film", "monthlySearch": 10317347, "topMarkets": "IN 25%, US 15%, PK 9%" },
+      { "keyword": "ai video kaise banaye", "monthlySearch": 2646886, "topMarkets": "IN 61%, PK 20%, DE 12%" },
+      { "keyword": "ai video tutorial", "monthlySearch": 1522212, "topMarkets": "IN 30%, US 13%, BD 10%" },
+      { "keyword": "image to video ai", "monthlySearch": 1265217, "topMarkets": "IN 16%, BD 16%, DE 16%" },
+      { "keyword": "ai se video kaise banaye", "monthlySearch": 1134135, "topMarkets": "IN 81%, PK 11%, AU 2%", "growthPct": 40.7 },
+      { "keyword": "unlimited ai video generator", "monthlySearch": 1094600, "topMarkets": "IN 27%, BD 14%, PK 14%" },
+      { "keyword": "ai short film", "monthlySearch": 1343379, "topMarkets": "PK 18%, IN 13%, US 10%" },
+      { "keyword": "ai storytelling", "monthlySearch": 700639, "topMarkets": "PK 17%, NG 12%, US 8%" },
+      { "keyword": "ai video creation", "monthlySearch": 774789, "topMarkets": "IN 42%, PK 13%, BD 13%" },
+      { "keyword": "ai filmmaking", "monthlySearch": 878947, "topMarkets": "IN 25%, PK 10%, US 9%" },
+      { "keyword": "text to video ai", "monthlySearch": 564210, "topMarkets": "IN 40%, PK 10%, US 10%" },
+      { "keyword": "cinematic ai video", "monthlySearch": 455958, "topMarkets": "PK 29%, US 21%, CA 14%" },
+      { "keyword": "ai short movie", "monthlySearch": 238040, "topMarkets": "IN 26%, PK 21%, BD 11%" },
+      { "keyword": "ai short films", "monthlySearch": 307545, "topMarkets": "PK 30%, CA 15%, IN 15%" }
+    ]
+  },
+  "marketSize": {
+    "sourceLabel": "Fortune Business Insights / Grand View Research, 2026 reports",
+    "narrowAiVideoGeneratorMarket2026Usd": 946400000,
+    "narrowAiVideoGeneratorMarket2025Usd": 716800000,
+    "cagrLowPct": 18.8,
+    "cagrHighPct": 31.38,
+    "forecast2033Usd": 3441600000,
+    "forecast2035Usd": 82640000000,
+    "regionShare": [
+      { "region": "North America", "sharePct": 41.0 },
+      { "region": "Europe", "sharePct": 23.1 },
+      { "region": "Asia-Pacific", "sharePct": 20.9 }
+    ],
+    "volumeGrowthJan2024ToJan2026Pct": 840,
+    "fortune500AdoptionPct": 73,
+    "videoMarketersUsingAiPct": 63,
+    "monthlyActiveUsersAcrossPlatforms": 124000000
+  },
+  "demographics": {
+    "sourceLabel": "Multiple 2026 US-focused surveys (EMARKETER, Idomoo State of Video, MarketingSherpa)",
+    "genZWantMoreAiVideoFromBrandsPct": 92,
+    "millennialsWantMoreAiVideoFromBrandsPct": 91,
+    "genZPreferAiVideoOverGenericPct": 72,
+    "genZCanIdentifyAiContentPct": 93,
+    "millennialsCanIdentifyAiContentPct": 89,
+    "note": "Millennials have slightly overtaken Gen Z in weekly generative-AI tool usage in some 2026 US surveys (47.2% vs 44.3%), even though Gen Z shows the highest demand for AI video specifically."
+  },
+  "pipeline": {
+    "steps": [
+      {
+        "title": "Prompt & text embedding",
+        "description": "A text description of the scene is converted into an embedding vector by a language model (often a T5-style transformer), capturing meaning rather than literal words."
+      },
+      {
+        "title": "Reference frame",
+        "description": "Many pipelines first generate a single high-fidelity reference image using a text-to-image model, giving the system a visual anchor for character, lighting, and style."
+      },
+      {
+        "title": "Latent compression",
+        "description": "Raw video is far too large to process pixel-by-pixel. A variational autoencoder compresses frames into a compact 'latent space' representation that keeps only the essential structure."
+      },
+      {
+        "title": "Reverse diffusion",
+        "description": "The model starts from pure random noise and, guided by the text/image embeddings through cross-attention, gradually removes noise over many steps until a coherent sequence of latent frames emerges."
+      },
+      {
+        "title": "Temporal consistency",
+        "description": "A transformer architecture tracks how objects, characters, and motion should evolve across frames so the video doesn't flicker or morph between shots."
+      },
+      {
+        "title": "Decoding & upscaling",
+        "description": "The denoised latent frames are decoded back into full-resolution pixels, then often passed through a super-resolution module for sharper, broadcast-ready footage."
+      }
+    ]
+  }
+}

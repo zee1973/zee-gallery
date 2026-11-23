@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How AI Filmmaking Works — The Global Data</title>
+<style>
+  :root {
+    --bg: #05020a;
+    --bg-elevated: #120a24;
+    --card: #180f30;
+    --text: #f5f2ff;
+    --text-dim: #a89bd6;
+    --border: #2e1d57;
+    --neon-pink: #ff2fd6;
+    --neon-cyan: #27f4e8;
+    --neon-yellow: #fbff2b;
+    --neon-purple: #9b3bff;
+    --neon-orange: #ff7a1a;
+    --grad-main: linear-gradient(135deg, var(--neon-pink), var(--neon-purple) 55%, var(--neon-cyan));
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(255,47,214,0.18), transparent 40%),
+      radial-gradient(circle at 85% 20%, rgba(39,244,232,0.15), transparent 40%),
+      radial-gradient(circle at 50% 90%, rgba(155,59,255,0.18), transparent 45%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow-x: hidden;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+  /* ---------- NAV ---------- */
+  .top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 0;
+  }
+  .back-link {
+    color: var(--neon-cyan);
+    font-weight: 700;
+    font-size: 13px;
+    text-decoration: none;
+  }
+  .back-link:hover { color: #fff; }
+  .trivia-btn {
+    background: var(--grad-main);
+    border: none;
+    color: #0a0014;
+    font-weight: 800;
+    font-size: 12.5px;
+    padding: 9px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255,47,214,0.45);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 14px rgba(255,47,214,0.4); }
+    50% { box-shadow: 0 0 28px rgba(39,244,232,0.6); }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero { text-align: center; padding: 36px 0 44px; }
+  .hero .eyebrow {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--neon-yellow);
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 6vw, 56px);
+    line-height: 1.08;
+    margin: 0 0 16px;
+    font-weight: 900;
+    background: var(--grad-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero p.sub {
+    max-width: 640px;
+    margin: 0 auto;
+    color: var(--text-dim);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* ---------- STAT STRIP ---------- */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 32px 0;
+  }
+  .stat-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 14px;
+    text-align: center;
+  }
+  .stat-box .num {
+    font-size: clamp(20px, 3vw, 30px);
+    font-weight: 900;
+    background: var(--grad-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .stat-box .lbl { font-size: 11px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+  @media (max-width: 700px) {
+    .stat-strip { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ---------- SECTION HEADERS ---------- */
+  section { padding: 52px 0; border-top: 1px solid var(--border); }
+  section:first-of-type { border-top: none; }
+  .section-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+  .tag-pink { background: rgba(255,47,214,0.15); color: var(--neon-pink); border: 1px solid rgba(255,47,214,0.4); }
+  .tag-cyan { background: rgba(39,244,232,0.15); color: var(--neon-cyan); border: 1px solid rgba(39,244,232,0.4); }
+  .tag-yellow { background: rgba(251,255,43,0.15); color: var(--neon-yellow); border: 1px solid rgba(251,255,43,0.4); }
+  .tag-orange { background: rgba(255,122,26,0.15); color: var(--neon-orange); border: 1px solid rgba(255,122,26,0.4); }
+  h2.section-title { font-size: clamp(24px, 4vw, 34px); font-weight: 900; margin: 0 0 10px; }
+  p.section-desc { color: var(--text-dim); font-size: 14.5px; max-width: 640px; line-height: 1.6; margin: 0 0 28px; }
+
+  /* ---------- PIPELINE CAROUSEL ---------- */
+  .carousel-outer { position: relative; }
+  .carousel-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 6px 4px 18px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--neon-purple) transparent;
+  }
+  .carousel-track::-webkit-scrollbar { height: 6px; }
+  .carousel-track::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 10px; }
+  .pipe-card {
+    flex: 0 0 260px;
+    scroll-snap-align: start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pipe-card::before {
+    content: attr(data-step);
+    position: absolute;
+    top: -10px;
+    right: -4px;
+    font-size: 72px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.05);
+    line-height: 1;
+  }
+  .pipe-card h3 { font-size: 15.5px; margin: 0 0 8px; color: var(--neon-cyan); position: relative; }
+  .pipe-card p { font-size: 13px; color: var(--text-dim); line-height: 1.55; margin: 0; position: relative; }
+  .carousel-hint { text-align: center; font-size: 11.5px; color: var(--text-dim); margin-top: 6px; }
+
+  /* ---------- CHART BOXES ---------- */
+  .chart-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px 18px;
+    margin-bottom: 18px;
+  }
+  .chart-box h3 { margin: 0 0 4px; font-size: 15px; }
+  .chart-box .chart-note { font-size: 11.5px; color: var(--text-dim); margin: 0 0 14px; }
+
+  /* ---------- COUNTRY BAR LIST ---------- */
+  .bar-list { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row { display: grid; grid-template-columns: 110px 1fr 90px; align-items: center; gap: 10px; }
+  .bar-row .country-name { font-size: 13px; font-weight: 700; }
+  .bar-track { height: 20px; border-radius: 999px; background: rgba(255,255,255,0.05); overflow: hidden; }
+  .bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--grad-main);
+    width: 0;
+    transition: width 1.1s cubic-bezier(.2,.9,.3,1);
+  }
+  .bar-row .bar-val { font-size: 12px; text-align: right; color: var(--text-dim); font-weight: 700; }
+
+  /* ---------- COUNTRY DEEP-DIVE SLIDER ---------- */
+  .country-slider-outer { position: relative; }
+  .country-slider {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 6px 4px 18px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--neon-cyan) transparent;
+  }
+  .country-slider::-webkit-scrollbar { height: 6px; }
+  .country-slider::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 10px; }
+  .country-card {
+    flex: 0 0 280px;
+    scroll-snap-align: start;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 0;
+    overflow: hidden;
+  }
+  .country-card .flag-band {
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+  }
+  .country-card .country-body { padding: 18px 20px 22px; }
+  .country-card h3 { margin: 0 0 2px; font-size: 18px; }
+  .country-card .rank-badge {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 800;
+    color: #0a0014;
+    background: var(--neon-yellow);
+    padding: 2px 9px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+  .country-card .fact { display: flex; justify-content: space-between; font-size: 12.5px; padding: 6px 0; border-bottom: 1px dashed var(--border); }
+  .country-card .fact:last-child { border-bottom: none; }
+  .country-card .fact .k { color: var(--text-dim); }
+  .country-card .fact .v { font-weight: 700; }
+
+  /* ---------- TOPIC CARDS GRID (continents) ---------- */
+  .continent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .continent-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+  }
+  .continent-card .cname { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--neon-pink); font-weight: 800; margin-bottom: 6px; }
+  .continent-card .leader { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .continent-card .leader-detail { font-size: 12.5px; color: var(--text-dim); }
+
+  /* ---------- GIF-STYLE ANIMATED DIFFUSION DEMO ---------- */
+  .noise-demo {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px;
+    text-align: center;
+  }
+  .noise-canvas-wrap {
+    width: 220px;
+    height: 220px;
+    margin: 0 auto 16px;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    background: #000;
+    border: 1px solid var(--border);
+  }
+  .noise-canvas-wrap canvas { width: 100%; height: 100%; display: block; }
+  .noise-caption { font-size: 12.5px; color: var(--text-dim); }
+  .noise-replay {
+    margin-top: 12px;
+    background: transparent;
+    border: 1.5px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .noise-replay:hover { background: rgba(39,244,232,0.12); }
+
+  /* ---------- KEYWORD TABLE ---------- */
+  table.kw-table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  table.kw-table th, table.kw-table td { text-align: left; padding: 10px 14px; font-size: 12.5px; border-bottom: 1px solid var(--border); }
+  table.kw-table th { color: var(--text-dim); text-transform: uppercase; font-size: 10px; letter-spacing: 0.04em; }
+  table.kw-table tr:last-child td { border-bottom: none; }
+  table.kw-table td.vol { color: var(--neon-cyan); font-weight: 800; }
+  table.kw-table td.markets { color: var(--text-dim); font-size: 11.5px; }
+  @media (max-width: 600px) { table.kw-table th:nth-child(3), table.kw-table td:nth-child(3) { display: none; } }
+
+  /* ---------- TRIVIA MODAL (mobile + tablet friendly) ---------- */
+  .trivia-modal {
+    position: fixed; inset: 0; background: rgba(2,0,8,0.85); backdrop-filter: blur(3px);
+    display: none; align-items: center; justify-content: center; z-index: 3000; padding: 18px;
+  }
+  .trivia-modal.open { display: flex; }
+  .trivia-box {
+    background: linear-gradient(160deg, #1b0f38, #0d0620);
+    border: 1.5px solid var(--neon-purple);
+    box-shadow: 0 0 60px rgba(155,59,255,0.35);
+    border-radius: 22px;
+    max-width: 440px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 28px 24px 26px;
+    position: relative;
+    text-align: center;
+  }
+  .trivia-box .trivia-emoji { font-size: 40px; margin-bottom: 10px; }
+  .trivia-box h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--neon-yellow); margin: 0 0 10px; font-weight: 800; }
+  .trivia-box p.trivia-text { font-size: 16.5px; line-height: 1.5; margin: 0 0 20px; font-weight: 600; }
+  .trivia-box p.trivia-source { font-size: 11px; color: var(--text-dim); margin: 0; }
+  .trivia-next {
+    background: var(--grad-main);
+    border: none; color: #0a0014; font-weight: 800; font-size: 13px;
+    padding: 10px 22px; border-radius: 999px; cursor: pointer; margin-top: 16px;
+  }
+  .trivia-close {
+    position: absolute; top: 14px; right: 16px; background: none; border: none;
+    color: var(--text-dim); font-size: 24px; cursor: pointer; line-height: 1;
+  }
+  .trivia-close:hover { color: #fff; }
+
+  /* ---------- FOOTER ---------- */
+  footer { text-align: center; padding: 44px 20px 60px; color: var(--text-dim); font-size: 12px; }
+  footer p { margin: 0 0 6px; }
+  .footer-link-btn { background: none; border: none; color: var(--neon-cyan); font-size: 12px; cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
+  .footer-link-btn:hover { color: #fff; }
+  .footer-dot { margin: 0 8px; color: var(--text-dim); }
+  .legal-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 24px; }
+  .legal-modal.open { display: flex; }
+  .legal-modal-box { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; max-width: 560px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 28px 28px 24px; position: relative; }
+  .legal-modal-box h2 { margin: 0 0 14px; font-size: 18px; color: var(--neon-cyan); }
+  .legal-modal-box p { font-size: 13.5px; line-height: 1.6; color: var(--text-dim); margin: 0 0 12px; }
+  .legal-modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--text-dim); font-size: 22px; cursor: pointer; line-height: 1; }
+  .legal-modal-close:hover { color: #fff; }
+
+  .more-nav { max-width: 760px; margin: 0 auto; padding: 0 20px 10px; text-align: center; }
+  .more-nav h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin: 0 0 14px; font-weight: 700; }
+  .more-nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .more-nav-links a { display: inline-block; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--text); text-decoration: none; font-size: 12.5px; font-weight: 600; }
+  .more-nav-links a:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="top-nav">
+    <a class="back-link" href="about.html">← Back to About</a>
+    <button class="trivia-btn" id="openTrivia">⚡ Trivia Mode</button>
+  </nav>
+
+  <div class="hero">
+    <span class="eyebrow">The Global Data Deep-Dive</span>
+    <h1>How AI Filmmaking<br>Actually Works</h1>
+    <p class="sub">From a blank text prompt to a finished cinematic shot — plus the real numbers on who's watching, who's making, and where AI video is exploding fastest around the world.</p>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-box"><div class="num" data-count="840" data-suffix="%">0%</div><div class="lbl">Volume growth, 2024→2026</div></div>
+    <div class="stat-box"><div class="num" data-count="49.9" data-decimals="1" data-suffix="M">0M</div><div class="lbl">Monthly searches for "AI video"</div></div>
+    <div class="stat-box"><div class="num" data-count="139" data-suffix=""></div><div class="lbl">Countries in one AI film contest</div></div>
+    <div class="stat-box"><div class="num" data-count="63" data-suffix="B">0B</div><div class="lbl">Views on AI channels (global)</div></div>
+  </div>
+
+  <!-- ===================== PIPELINE ===================== -->
+  <section id="pipeline">
+    <span class="section-tag tag-cyan">The Tech</span>
+    <h2 class="section-title">From noise to a finished scene</h2>
+    <p class="section-desc">Every modern AI video tool — Sora, Veo, Runway, Higgsfield — runs roughly the same six-stage pipeline under the hood. Swipe through it →</p>
+
+    <div class="noise-demo">
+      <div class="noise-canvas-wrap"><canvas id="noiseCanvas" width="220" height="220"></canvas></div>
+      <p class="noise-caption">This is literally what step 4 looks like: pure random noise, denoised step by step into a coherent frame.</p>
+      <button class="noise-replay" id="replayNoise">▶ Replay the denoising</button>
+    </div>
+
+    <div class="carousel-outer" style="margin-top:22px;">
+      <div class="carousel-track" id="pipelineTrack"></div>
+      <p class="carousel-hint">← swipe or scroll →</p>
+    </div>
+  </section>
+
+  <!-- ===================== CONSUMPTION ===================== -->
+  <section id="consumption">
+    <span class="section-tag tag-pink">Who's Watching</span>
+    <h2 class="section-title">Which countries watch the most AI video?</h2>
+    <p class="section-desc">Kapwing analyzed the top 100 trending YouTube channels in every country and isolated the ones running almost entirely on AI-generated content. Here's where the views pile up.</p>
+
+    <div class="chart-box">
+      <h3>Total views on trending AI channels, by country</h3>
+      <p class="chart-note">South Korea's 11 channels alone out-view the next two countries combined.</p>
+      <div class="bar-list" id="viewsBarList"></div>
+    </div>
+
+    <div class="chart-box">
+      <h3>Subscribers to trending AI channels, by country</h3>
+      <p class="chart-note">Spain tops this list with just 8 channels — nearly half the country follows one.</p>
+      <div class="bar-list" id="subsBarList"></div>
+    </div>
+  </section>
+
+  <!-- ===================== PRODUCTION ===================== -->
+  <section id="production">
+    <span class="section-tag tag-yellow">Who's Making It</span>
+    <h2 class="section-title">Which countries produce the most AI films?</h2>
+    <p class="section-desc">The 2026 Higgsfield global AI filmmaking contest drew 8,752 submissions from 139 countries. India submitted more films than any other nation — nearly double the United States.</p>
+
+    <div class="chart-box">
+      <h3>Contest submissions by country</h3>
+      <p class="chart-note">8,752 total entries · $500,000 prize pool · Higgsfield "Make Your Action Scene," March 2026</p>
+      <div class="bar-list" id="prodBarList"></div>
+    </div>
+  </section>
+
+  <!-- ===================== COUNTRY DEEP DIVE ===================== -->
+  <section id="deepdive">
+    <span class="section-tag tag-orange">Spotlight</span>
+    <h2 class="section-title">Pakistan, India &amp; Bangladesh: the AI-video belt</h2>
+    <p class="section-desc">These three countries dominate both sides of the equation — the biggest search demand for "how do I make an AI video," and some of the biggest consumption of AI content on YouTube.</p>
+    <div class="country-slider-outer">
+      <div class="country-slider" id="countrySlider"></div>
+    </div>
+    <p class="carousel-hint">← swipe for more countries →</p>
+  </section>
+
+  <!-- ===================== CONTINENTS ===================== -->
+  <section id="continents">
+    <span class="section-tag tag-cyan">Around The World</span>
+    <h2 class="section-title">A leader on every continent</h2>
+    <p class="section-desc">Based on the Higgsfield contest's 139-country footprint and the Kapwing consumption data, here's the top AI-video nation on each continent.</p>
+    <div class="continent-grid" id="continentGrid"></div>
+  </section>
+
+  <!-- ===================== SEARCH DEMAND ===================== -->
+  <section id="searchdemand">
+    <span class="section-tag tag-pink">Search Demand</span>
+    <h2 class="section-title">What the world is actually typing into Google</h2>
+    <p class="section-desc">Real global monthly search volume for AI-video related terms, pulled live. Notice how consistently India, Pakistan, and Bangladesh top the market breakdown.</p>
+    <table class="kw-table">
+      <thead><tr><th>Search term</th><th>Monthly searches</th><th>Top markets</th></tr></thead>
+      <tbody id="kwTable"></tbody>
+    </table>
+  </section>
+
+  <!-- ===================== MARKET + DEMOGRAPHICS ===================== -->
+  <section id="market">
+    <span class="section-tag tag-yellow">Market &amp; Demographics</span>
+    <h2 class="section-title">The business of AI video</h2>
+    <p class="section-desc">The AI video generator market is still small by Hollywood standards — but it's growing faster than almost any other software category.</p>
+
+    <div class="chart-box">
+      <h3>Market share by region, 2026</h3>
+      <div class="bar-list" id="regionBarList"></div>
+    </div>
+
+    <div class="continent-grid" style="margin-top:4px;">
+      <div class="continent-card">
+        <div class="cname">Gen Z</div>
+        <div class="leader">92% want more AI video</div>
+        <div class="leader-detail">from the brands they follow — the highest of any generation</div>
+      </div>
+      <div class="continent-card">
+        <div class="cname">Millennials</div>
+        <div class="leader">91% want more AI video</div>
+        <div class="leader-detail">and now slightly edge out Gen Z in weekly generative-AI tool use overall</div>
+      </div>
+      <div class="continent-card">
+        <div class="cname">Fortune 500</div>
+        <div class="leader">73% already use AI</div>
+        <div class="leader-detail">in their content production pipelines as of 2026</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="more-nav">
+  <h3>More from this channel</h3>
+  <div class="more-nav-links">
+    <a href="about.html">About this channel</a>
+    <a href="stats.html">Channel growth</a>
+    <a href="top-videos.html">Fan favorites</a>
+    <a href="insights.html">Topic insights</a>
+    <a href="timeline.html">Content timeline</a>
+    <a href="random-spotlight.html">Random spotlight</a>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; <span id="copyrightYear"></span> Zeewaqar Husnain. All rights reserved.</p>
+  <p class="footer-links">
+    <button type="button" class="footer-link-btn" id="openPrivacy">Privacy Policy</button>
+    <span class="footer-dot">·</span>
+    <button type="button" class="footer-link-btn" id="openDisclaimer">Disclaimer</button>
+  </p>
+</footer>
+
+<div class="legal-modal" id="legalModal">
+  <div class="legal-modal-box">
+    <button class="legal-modal-close" id="legalModalClose">&times;</button>
+    <h2 id="legalModalTitle"></h2>
+    <div id="legalModalBody"></div>
+  </div>
+</div>
+
+<!-- TRIVIA MODAL -->
+<div class="trivia-modal" id="triviaModal">
+  <div class="trivia-box">
+    <button class="trivia-close" id="triviaClose">&times;</button>
+    <div class="trivia-emoji" id="triviaEmoji">🎬</div>
+    <h2>Did you know?</h2>
+    <p class="trivia-text" id="triviaText">Loading...</p>
+    <p class="trivia-source" id="triviaSource"></p>
+    <button class="trivia-next" id="triviaNext">Next fact →</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+document.getElementById('copyrightYear').textContent = new Date().getFullYear();
+
+/* ---------------- Number count-up ---------------- */
+function animateCounters() {
+  document.querySelectorAll('.stat-box .num').forEach(el => {
+    const target = parseFloat(el.dataset.count);
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    const suffix = el.dataset.suffix || '';
+    let start = null;
+    const duration = 1400;
+    function step(ts) {
+      if (!start) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const val = target * eased;
+      el.textContent = val.toFixed(decimals) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = target.toFixed(decimals) + suffix;
+    }
+    requestAnimationFrame(step);
+  });
+}
+const statObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { animateCounters(); statObserver.disconnect(); }
+  });
+}, { threshold: 0.3 });
+statObserver.observe(document.querySelector('.stat-strip'));
+
+/* ---------------- Noise -> denoise canvas demo ---------------- */
+const canvas = document.getElementById('noiseCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+let targetImg = null;
+function drawTargetScene(c) {
+  // A simple generated "cinematic" gradient scene as the denoising target
+  const g = c.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#2a0845');
+  g.addColorStop(0.55, '#6a0f8f');
+  g.addColorStop(1, '#ff2fd6');
+  c.fillStyle = g;
+  c.fillRect(0, 0, W, H);
+  // sun
+  c.beginPath();
+  c.arc(W * 0.7, H * 0.35, 28, 0, Math.PI * 2);
+  c.fillStyle = '#fbff2b';
+  c.fill();
+  // mountains
+  c.beginPath();
+  c.moveTo(0, H);
+  c.lineTo(0, H * 0.75);
+  c.lineTo(W * 0.3, H * 0.55);
+  c.lineTo(W * 0.55, H * 0.7);
+  c.lineTo(W * 0.8, H * 0.5);
+  c.lineTo(W, H * 0.68);
+  c.lineTo(W, H);
+  c.closePath();
+  c.fillStyle = '#120a24';
+  c.fill();
+}
+const targetCanvas = document.createElement('canvas');
+targetCanvas.width = W; targetCanvas.height = H;
+drawTargetScene(targetCanvas.getContext('2d'));
+const targetData = targetCanvas.getContext('2d').getImageData(0, 0, W, H);
+
+function runDenoise() {
+  const steps = 26;
+  let frame = 0;
+  const noiseData = ctx.createImageData(W, H);
+  function render() {
+    const t = frame / steps; // 0 = full noise, 1 = clean
+    const out = ctx.createImageData(W, H);
+    for (let i = 0; i < out.data.length; i += 4) {
+      const noiseVal = Math.random() * 255;
+      const mix = Math.min(t * 1.15, 1);
+      out.data[i]     = targetData.data[i]     * mix + noiseVal * (1 - mix);
+      out.data[i + 1] = targetData.data[i + 1] * mix + noiseVal * (1 - mix);
+      out.data[i + 2] = targetData.data[i + 2] * mix + noiseVal * (1 - mix);
+      out.data[i + 3] = 255;
+    }
+    ctx.putImageData(out, 0, 0);
+    frame++;
+    if (frame <= steps) requestAnimationFrame(render);
+  }
+  frame = 0;
+  render();
+}
+runDenoise();
+document.getElementById('replayNoise').addEventListener('click', runDenoise);
+
+/* ---------------- Fetch data + build everything ---------------- */
+fetch('ai-filmmaking-data.json')
+  .then(r => r.json())
+  .then(data => {
+    buildPipeline(data.pipeline.steps);
+    buildBars('viewsBarList', data.consumption.byViews.map(d => ({ label: d.country, value: d.views, display: (d.views / 1e9).toFixed(2) + 'B' })));
+    buildBars('subsBarList', data.consumption.bySubscribers.map(d => ({ label: d.country, value: d.subscribers, display: (d.subscribers / 1e6).toFixed(1) + 'M' })));
+    buildBars('prodBarList', data.production.bySubmissions.map(d => ({ label: d.country, value: d.submissions, display: d.submissions.toLocaleString() })));
+    buildBars('regionBarList', data.marketSize.regionShare.map(d => ({ label: d.region, value: d.sharePct, display: d.sharePct + '%' })));
+    buildCountrySlider(data);
+    buildContinents(data);
+    buildKeywordTable(data.searchDemand.keywords);
+    buildTrivia(data);
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById('pipelineTrack').innerHTML = '<p style="color:var(--text-dim);padding:20px;">Could not load data.</p>';
+  });
+
+function buildPipeline(steps) {
+  document.getElementById('pipelineTrack').innerHTML = steps.map((s, i) => `
+    <div class="pipe-card" data-step="${i + 1}">
+      <h3>${i + 1}. ${s.title}</h3>
+      <p>${s.description}</p>
+    </div>
+  `).join('');
+}
+
+function buildBars(elId, rows) {
+  const max = Math.max(...rows.map(r => r.value));
+  const el = document.getElementById(elId);
+  el.innerHTML = rows.map(r => `
+    <div class="bar-row">
+      <span class="country-name">${r.label}</span>
+      <div class="bar-track"><div class="bar-fill" data-width="${(r.value / max * 100).toFixed(1)}"></div></div>
+      <span class="bar-val">${r.display}</span>
+    </div>
+  `).join('');
+  // animate width after paint
+  requestAnimationFrame(() => {
+    el.querySelectorAll('.bar-fill').forEach(f => { f.style.width = f.dataset.width + '%'; });
+  });
+}
+
+function buildCountrySlider(data) {
+  const pk = data.searchDemand.keywords.find(k => k.keyword === 'ai video').topMarkets;
+  const cards = [
+    {
+      flag: '🇵🇰', name: 'Pakistan', rank: '#2 in AI-slop views worldwide',
+      facts: [
+        ['AI channel views', '5.34B'],
+        ['Trending AI channels', '20 (most of any country)'],
+        ['Top AI-film search term', '"ai film" — 19% of searches'],
+        ['"cinematic ai video" share', '29% (#1 globally)']
+      ]
+    },
+    {
+      flag: '🇮🇳', name: 'India', rank: '#1 in contest submissions',
+      facts: [
+        ['Higgsfield entries', '1,805 films'],
+        ['Most-viewed AI channel worldwide', 'Bandar Apna Dost — 2.07B views'],
+        ['"ai video" search share', '27% (world\'s top market)'],
+        ['"ai video kaise banaye"', '61% share — 2.6M searches/mo']
+      ]
+    },
+    {
+      flag: '🇧🇩', name: 'Bangladesh', rank: 'Rising fast in search demand',
+      facts: [
+        ['"ai video" search share', '17% (top 3 globally)'],
+        ['"image to video ai" share', '16% (tied for #1)'],
+        ['"ai video creation" share', '13%'],
+        ['Context', 'AI-made political content widely documented ahead of 2026 elections']
+      ]
+    },
+    {
+      flag: '🇪🇸', name: 'Spain', rank: '#1 in AI-channel subscribers',
+      facts: [
+        ['Subscribers to AI channels', '20.22M — nearly half the population'],
+        ['Trending AI channels', 'Just 8 (most efficient reach)'],
+        ['Top channels', 'Cuentos Facinantes, Imperio de Jesus'],
+        ['Format', 'Spanish-language comedy & quiz shorts']
+      ]
+    },
+    {
+      flag: '🇰🇷', name: 'South Korea', rank: '#1 in total AI-channel views',
+      facts: [
+        ['AI channel views', '8.45B — most of any country'],
+        ['Trending AI channels', '11'],
+        ['Top channel', 'Three Minutes Wisdom — 2.02B views alone'],
+        ['Share of national total', 'Nearly 1/4 of all AI views from one channel']
+      ]
+    },
+    {
+      flag: '🇩🇪', name: 'Germany', rank: '#3 in AI-film production',
+      facts: [
+        ['Higgsfield entries', '278 films'],
+        ['Notable win', 'Co-produced Higgsfield grand-prize film (with Jordan)'],
+        ['Context', 'Utopai Studios began AI-assisted principal photography in Germany, Sept 2026'],
+        ['Market position', 'Europe holds 23.1% of global AI video market']
+      ]
+    }
+  ];
+  document.getElementById('countrySlider').innerHTML = cards.map(c => `
+    <div class="country-card">
+      <div class="flag-band">${c.flag}</div>
+      <div class="country-body">
+        <h3>${c.name}</h3>
+        <span class="rank-badge">${c.rank}</span>
+        ${c.facts.map(f => `<div class="fact"><span class="k">${f[0]}</span><span class="v">${f[1]}</span></div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function buildContinents(data) {
+  const continents = [
+    { name: 'Asia', leader: 'India', detail: '1,805 AI film entries — more than any nation on Earth, plus the world\'s most-viewed AI channel.' },
+    { name: 'North America', leader: 'United States', detail: '1,041 contest entries and 41% of global AI-video market share — still the commercial center of gravity.' },
+    { name: 'Europe', leader: 'Germany', detail: '278 entries led Europe, with France (230), Italy (228) and the UK (196) close behind. Region holds 23.1% of global market.' },
+    { name: 'South America', leader: 'Brazil', detail: '212 contest entries and 12.56M subscribers across trending AI channels — the top AI-content hub in Latin America.' },
+    { name: 'Africa', leader: 'Egypt', detail: '14 trending AI channels pulling 3.24 billion views and 17.9M subscribers — the continent\'s clear AI-video leader.' },
+    { name: 'Oceania', leader: 'Australia', detail: 'A top-3 market for "ai se video kaise banaye" search demand, reflecting a fast-growing creator base Down Under.' }
+  ];
+  document.getElementById('continentGrid').innerHTML = continents.map(c => `
+    <div class="continent-card">
+      <div class="cname">${c.name}</div>
+      <div class="leader">${c.leader}</div>
+      <div class="leader-detail">${c.detail}</div>
+    </div>
+  `).join('');
+}
+
+function buildKeywordTable(keywords) {
+  document.getElementById('kwTable').innerHTML = keywords
+    .slice()
+    .sort((a, b) => b.monthlySearch - a.monthlySearch)
+    .map(k => `
+      <tr>
+        <td>${k.keyword}</td>
+        <td class="vol">${k.monthlySearch.toLocaleString()}</td>
+        <td class="markets">${k.topMarkets}</td>
+      </tr>
+    `).join('');
+}
+
+/* ---------------- Trivia modal ---------------- */
+let triviaFacts = [];
+let triviaIndex = 0;
+function buildTrivia(data) {
+  triviaFacts = [
+    { emoji: '🐒', text: `India's "Bandar Apna Dost" — a channel about an AI-animated monkey — is the single most-viewed AI channel on Earth, with over 2 billion views and roughly $4.25M a year in ad revenue.`, source: 'Kapwing AI Slop Report, 2026' },
+    { emoji: '🇵🇰', text: `Pakistan has more trending AI-generated channels than any other country — 20 out of its top 100 — and ranks #2 globally in total AI-content views at 5.34 billion.`, source: 'Kapwing AI Slop Report, 2026' },
+    { emoji: '🇰🇷', text: `South Korea's AI channels have racked up 8.45 billion views — more than Pakistan and the USA's totals combined.`, source: 'Kapwing AI Slop Report, 2026' },
+    { emoji: '🇪🇸', text: `Spain's AI-slop channels have 20.22 million combined subscribers — almost half the entire population of Spain follows one.`, source: 'Kapwing AI Slop Report, 2026' },
+    { emoji: '🎥', text: `A single AI film competition in March 2026 (Higgsfield) drew 8,752 submissions from 139 countries — more countries than are in the FIFA World Cup.`, source: 'Higgsfield / PR Newswire, March 2026' },
+    { emoji: '🇮🇳', text: `India submitted 1,805 films to that same contest — more than the next two countries (USA, Germany) combined.`, source: 'Higgsfield global film competition, 2026' },
+    { emoji: '📈', text: `AI video generation volume grew 840% between January 2024 and January 2026 — essentially becoming mainstream in under two years.`, source: 'Luma Labs AI Video Statistics, 2026' },
+    { emoji: '🔍', text: `"AI video" is searched 49.9 million times a month worldwide — and India, Pakistan, and Bangladesh together make up over 60% of that search volume.`, source: 'vidIQ keyword research' },
+    { emoji: '🧠', text: `The denoising animation above shows the real technique: AI video models start from pure random static and remove noise in dozens of tiny steps until a coherent scene appears.`, source: 'Diffusion model architecture, 2026 literature' },
+    { emoji: '💰', text: `The top 10 highest-earning AI "slop" channels worldwide pull in an estimated $33.6 million a year combined.`, source: 'Kapwing AI Slop Report, 2026' },
+    { emoji: '👶', text: `92% of Gen Z say they want MORE AI video content from brands — the highest demand of any generation, even as Millennials now narrowly lead in weekly AI tool usage.`, source: 'Idomoo State of Video 2026 / Channel V Media' },
+    { emoji: '🇧🇩', text: `Bangladesh ties for the #1 spot globally on "image to video ai" search share at 16% — alongside India and Germany.`, source: 'vidIQ keyword research' }
+  ];
+  triviaIndex = 0;
+}
+function showTrivia(i) {
+  if (!triviaFacts.length) return;
+  const f = triviaFacts[i % triviaFacts.length];
+  document.getElementById('triviaEmoji').textContent = f.emoji;
+  document.getElementById('triviaText').textContent = f.text;
+  document.getElementById('triviaSource').textContent = 'Source: ' + f.source;
+}
+document.getElementById('openTrivia').addEventListener('click', () => {
+  if (!triviaFacts.length) {
+    // data may not have loaded yet; fall back gracefully
+    setTimeout(() => { showTrivia(triviaIndex); document.getElementById('triviaModal').classList.add('open'); }, 300);
+    return;
+  }
+  showTrivia(triviaIndex);
+  document.getElementById('triviaModal').classList.add('open');
+});
+document.getElementById('triviaNext').addEventListener('click', () => {
+  triviaIndex = (triviaIndex + 1) % (triviaFacts.length || 1);
+  showTrivia(triviaIndex);
+});
+document.getElementById('triviaClose').addEventListener('click', () => document.getElementById('triviaModal').classList.remove('open'));
+document.getElementById('triviaModal').addEventListener('click', (e) => { if (e.target.id === 'triviaModal') document.getElementById('triviaModal').classList.remove('open'); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { document.getElementById('triviaModal').classList.remove('open'); closeLegalModal(); } });
+
+/* ---------------- Legal modal (shared pattern) ---------------- */
+const LEGAL_CONTENT = {
+  privacy: {
+    title: 'Privacy Policy',
+    body: `
+      <p>This page displays aggregated, third-party research statistics about AI video and film trends. We do not require you to create an account, and we do not collect personal information such as your name, email address, or payment details through this site.</p>
+      <p>Standard technical data (such as your browser type, approximate location, and pages visited) may be collected automatically by our hosting provider for the purposes of maintaining and securing the site, as is common with most websites.</p>
+      <p>We do not sell or share any visitor data with third parties for advertising purposes.</p>
+    `
+  },
+  disclaimer: {
+    title: 'Disclaimer',
+    body: `
+      <p>The statistics on this page are drawn from third-party research reports (including Kapwing, Higgsfield, Fortune Business Insights, and vidIQ keyword data) current as of their publication dates in 2026. They are estimates and may not reflect real-time figures.</p>
+      <p>This page discusses "AI slop" and other content trends for informational and educational purposes only. Inclusion of a channel, country, or statistic is not an endorsement of any content described.</p>
+      <p>Any action you take based on the content found on this page is strictly at your own risk. We will not be liable for any losses or damages in connection with the use of this site.</p>
+    `
+  }
+};
+function openLegalModal(key) {
+  const content = LEGAL_CONTENT[key];
+  if (!content) return;
+  document.getElementById('legalModalTitle').textContent = content.title;
+  document.getElementById('legalModalBody').innerHTML = content.body;
+  document.getElementById('legalModal').classList.add('open');
+}
+function closeLegalModal() { document.getElementById('legalModal').classList.remove('open'); }
+document.getElementById('openPrivacy').addEventListener('click', () => openLegalModal('privacy'));
+document.getElementById('openDisclaimer').addEventListener('click', () => openLegalModal('disclaimer'));
+document.getElementById('legalModalClose').addEventListener('click', closeLegalModal);
+document.getElementById('legalModal').addEventListener('click', (e) => { if (e.target.id === 'legalModal') closeLegalModal(); });
+</script>
+
+</body>
+</html>
