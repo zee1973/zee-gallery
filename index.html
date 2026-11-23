@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zee Waqar — AI Art Gallery</title>
+<title>Zee Waqar — Videos</title>
 <style>
   :root {
     --bg: #0b0b0d;
@@ -29,18 +29,19 @@
     font-size: 28px;
     font-weight: 600;
     margin: 0 0 8px;
-    letter-spacing: 0.3px;
   }
-  header p {
-    color: var(--text-dim);
-    margin: 0 0 20px;
-    font-size: 14px;
+  header p { color: var(--text-dim); font-size: 14px; margin: 0 0 16px; }
+  .back-link {
+    display: inline-block;
+    color: var(--accent);
+    font-size: 13px;
+    text-decoration: none;
   }
   .controls {
     display: flex;
     justify-content: center;
     gap: 10px;
-    flex-wrap: wrap;
+    margin-top: 18px;
   }
   .controls button {
     background: var(--bg-elevated);
@@ -50,124 +51,53 @@
     border-radius: 20px;
     font-size: 13px;
     cursor: pointer;
-    transition: all 0.15s ease;
   }
-  .controls button:hover {
-    border-color: var(--accent);
-  }
-  .controls button.active {
-    background: var(--accent);
-    color: #1a1a1a;
-    border-color: var(--accent);
-  }
-  .videos-link {
-    display: inline-block;
-    margin-top: 14px;
-    color: var(--accent);
-    font-size: 13px;
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-  }
-  .videos-link:hover { border-bottom-color: var(--accent); }
+  .controls button.active { background: var(--accent); color: #1a1a1a; border-color: var(--accent); }
 
-  .gallery {
+  .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 4px;
-    padding: 4px;
-    max-width: 1600px;
-    margin: 0 auto;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 24px;
   }
-  .item {
-    position: relative;
-    overflow: hidden;
-    aspect-ratio: 1 / 1;
+  .video-card {
     background: var(--bg-elevated);
-    cursor: pointer;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
   }
-  .item img {
+  .video-card .embed {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+  }
+  .video-card iframe {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.3s ease;
+    border: 0;
   }
-  .item:hover img {
-    transform: scale(1.05);
+  .video-card .meta {
+    padding: 14px 16px;
   }
-  .item .overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 10px 10px 8px;
-    background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
-    font-size: 11px;
-    color: #ddd;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .video-card .meta h3 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 500;
   }
-  .item:hover .overlay { opacity: 1; }
-
-  /* Lightbox */
-  .lightbox {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.92);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 24px;
+  .video-card .meta p {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 12px;
   }
-  .lightbox.open { display: flex; }
-  .lightbox img {
-    max-width: 92vw;
-    max-height: 86vh;
-    object-fit: contain;
-    border-radius: 4px;
-  }
-  .lightbox .close {
-    position: absolute;
-    top: 20px;
-    right: 28px;
-    font-size: 32px;
-    color: #fff;
-    cursor: pointer;
-    background: none;
-    border: none;
-    line-height: 1;
-  }
-  .lightbox .caption {
-    position: absolute;
-    bottom: 24px;
-    left: 0;
-    right: 0;
+  .empty-note {
     text-align: center;
-    color: #ccc;
-    font-size: 13px;
-    padding: 0 40px;
+    color: var(--text-dim);
+    padding: 60px 20px;
+    font-size: 14px;
   }
-  .lightbox .nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255,255,255,0.08);
-    border: none;
-    color: #fff;
-    font-size: 28px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    cursor: pointer;
-  }
-  .lightbox .nav:hover { background: rgba(255,255,255,0.18); }
-  .lightbox .prev { left: 16px; }
-  .lightbox .next { right: 16px; }
-
   footer {
     text-align: center;
     padding: 40px 20px 60px;
@@ -179,103 +109,58 @@
 <body>
 
 <header>
-  <h1>Zee Waqar — AI Art Gallery</h1>
+  <h1>Videos</h1>
   <p id="countLabel">Loading…</p>
+  <a class="back-link" href="images.html">See the images →</a>
   <div class="controls">
-    <button id="sortNewest" class="active">Newest first</button>
-    <button id="sortOldest">Oldest first</button>
-  </div>
-  <div>
-    <a class="videos-link" href="videos.html">Watch the videos →</a>
+    <button id="sortNewest">Newest first</button>
+    <button id="sortOldest" class="active">Oldest first</button>
   </div>
 </header>
 
-<main class="gallery" id="gallery"></main>
+<main class="grid" id="grid"></main>
 
-<div class="lightbox" id="lightbox">
-  <button class="close" id="lbClose">&times;</button>
-  <button class="nav prev" id="lbPrev">&#8249;</button>
-  <img id="lbImg" src="" alt="">
-  <button class="nav next" id="lbNext">&#8250;</button>
-  <div class="caption" id="lbCaption"></div>
-</div>
-
-<footer>Built with Claude · images hosted directly on this page</footer>
+<footer>Built with Claude</footer>
 
 <script>
-let data = [];
-let currentOrder = [];
-let sortDesc = true; // newest first by default
-let currentIndex = 0;
+let videos = [];
+let sortDesc = false;
 
-function cleanTitle(title) {
-  // Strip "zeewaqar_" prefix and Midjourney-style job params / uuid tails for readability
-  let t = title.replace(/^zeewaqar_/, '');
-  t = t.replace(/_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}.*$/i, '');
-  t = t.replace(/--[a-z]+ [^\s_]+/gi, '');
-  t = t.replace(/_/g, ' ').trim();
-  if (t.length > 70) t = t.slice(0, 70) + '…';
-  return t || title;
+function getYouTubeId(url) {
+  const m = url.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&?/]+)/);
+  return m ? m[1] : null;
 }
 
 function render() {
-  const gallery = document.getElementById('gallery');
-  gallery.innerHTML = '';
-  currentOrder = [...data].sort((a, b) => sortDesc ? b.mtime - a.mtime : a.mtime - b.mtime);
-  document.getElementById('countLabel').textContent = `${currentOrder.length} pieces`;
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  const ordered = [...videos].sort((a, b) => sortDesc ? b.date - a.date : a.date - b.date);
+  document.getElementById('countLabel').textContent = ordered.length ? `${ordered.length} videos` : 'No videos added yet';
 
-  currentOrder.forEach((item, idx) => {
-    const div = document.createElement('div');
-    div.className = 'item';
-    const img = document.createElement('img');
-    img.src = 'images/' + item.file;
-    img.loading = 'lazy';
-    img.alt = cleanTitle(item.title);
-    div.appendChild(img);
+  if (ordered.length === 0) {
+    grid.innerHTML = '<div class="empty-note">No videos added yet. Edit <code>videos-data.json</code> and add your YouTube links to see them here.</div>';
+    return;
+  }
 
-    const overlay = document.createElement('div');
-    overlay.className = 'overlay';
-    overlay.textContent = cleanTitle(item.title);
-    div.appendChild(overlay);
-
-    div.addEventListener('click', () => openLightbox(idx));
-    gallery.appendChild(div);
+  ordered.forEach(v => {
+    const id = getYouTubeId(v.url);
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    const embed = document.createElement('div');
+    embed.className = 'embed';
+    if (id) {
+      embed.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" title="${v.title}" allowfullscreen></iframe>`;
+    } else {
+      embed.innerHTML = `<a href="${v.url}" target="_blank" style="color:#d9b35b;display:flex;align-items:center;justify-content:center;height:100%;">Watch on YouTube →</a>`;
+    }
+    card.appendChild(embed);
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.innerHTML = `<h3>${v.title}</h3><p>${new Date(v.date).toLocaleDateString()}</p>`;
+    card.appendChild(meta);
+    grid.appendChild(card);
   });
 }
-
-function openLightbox(idx) {
-  currentIndex = idx;
-  updateLightbox();
-  document.getElementById('lightbox').classList.add('open');
-}
-function updateLightbox() {
-  const item = currentOrder[currentIndex];
-  document.getElementById('lbImg').src = 'images/' + item.file;
-  document.getElementById('lbCaption').textContent = cleanTitle(item.title);
-}
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-}
-document.getElementById('lbClose').addEventListener('click', closeLightbox);
-document.getElementById('lightbox').addEventListener('click', (e) => {
-  if (e.target.id === 'lightbox') closeLightbox();
-});
-document.getElementById('lbPrev').addEventListener('click', (e) => {
-  e.stopPropagation();
-  currentIndex = (currentIndex - 1 + currentOrder.length) % currentOrder.length;
-  updateLightbox();
-});
-document.getElementById('lbNext').addEventListener('click', (e) => {
-  e.stopPropagation();
-  currentIndex = (currentIndex + 1) % currentOrder.length;
-  updateLightbox();
-});
-document.addEventListener('keydown', (e) => {
-  if (!document.getElementById('lightbox').classList.contains('open')) return;
-  if (e.key === 'Escape') closeLightbox();
-  if (e.key === 'ArrowLeft') document.getElementById('lbPrev').click();
-  if (e.key === 'ArrowRight') document.getElementById('lbNext').click();
-});
 
 document.getElementById('sortNewest').addEventListener('click', () => {
   sortDesc = true;
@@ -290,16 +175,10 @@ document.getElementById('sortOldest').addEventListener('click', () => {
   render();
 });
 
-fetch('gallery-data.json')
+fetch('videos-data.json')
   .then(r => r.json())
-  .then(json => {
-    data = json;
-    render();
-  })
-  .catch(err => {
-    document.getElementById('countLabel').textContent = 'Failed to load gallery data.';
-    console.error(err);
-  });
+  .then(json => { videos = json; render(); })
+  .catch(() => { videos = []; render(); });
 </script>
 
 </body>
