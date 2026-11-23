@@ -53,6 +53,35 @@
     cursor: pointer;
   }
   .controls button.active { background: var(--accent); color: #1a1a1a; border-color: var(--accent); }
+  .page-jump {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .page-jump input {
+    width: 70px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    text-align: center;
+  }
+  .page-jump input::-webkit-outer-spin-button,
+  .page-jump input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .page-jump button {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+  }
 
   .grid {
     display: grid;
@@ -149,6 +178,10 @@
   <div class="controls">
     <button id="sortNewest">Newest first</button>
     <button id="sortOldest" class="active">Oldest first</button>
+    <form class="page-jump" id="pageJumpForm">
+      <input type="number" id="pageJumpInput" min="1" placeholder="Page #">
+      <button type="submit">Go</button>
+    </form>
   </div>
 </header>
 
@@ -161,6 +194,7 @@
 let videos = [];
 let sortDesc = false;
 let currentPage = 1;
+let totalPagesGlobal = 1;
 const PAGE_SIZE = 20;
 
 function getYouTubeId(url) {
@@ -208,6 +242,7 @@ function render() {
     grid.appendChild(card);
   });
 
+  totalPagesGlobal = totalPages;
   renderPagination(totalPages);
 }
 
@@ -269,6 +304,16 @@ document.getElementById('sortOldest').addEventListener('click', () => {
   document.getElementById('sortOldest').classList.add('active');
   document.getElementById('sortNewest').classList.remove('active');
   render();
+});
+
+document.getElementById('pageJumpForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const input = document.getElementById('pageJumpInput');
+  let p = parseInt(input.value, 10);
+  if (!p || isNaN(p)) return;
+  p = Math.min(Math.max(p, 1), totalPagesGlobal);
+  goToPage(p);
+  input.value = '';
 });
 
 fetch('videos-data.json')
