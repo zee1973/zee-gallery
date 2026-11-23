@@ -147,6 +147,8 @@
     margin: 0 auto 50px;
     padding: 0 24px;
   }
+  .pagination-top { margin: 8px auto 0; }
+  .pagination-top:empty { display: none; }
   .pagination button {
     background: var(--bg-elevated);
     border: 1px solid var(--border);
@@ -287,16 +289,22 @@
     <button class="catBtn" data-cat="all" data-sort="desc">Latest</button>
     <button class="catBtn active" data-cat="all" data-sort="asc">Oldest</button>
   </div>
+  <nav class="pagination pagination-top" id="paginationTop-all"></nav>
+
   <div class="controls">
     <span class="group-label">3D</span>
     <button class="catBtn" data-cat="3d" data-sort="desc">Latest</button>
     <button class="catBtn" data-cat="3d" data-sort="asc">Oldest</button>
   </div>
+  <nav class="pagination pagination-top" id="paginationTop-3d"></nav>
+
   <div class="controls">
     <span class="group-label">AI</span>
     <button class="catBtn" data-cat="ai" data-sort="desc">Latest</button>
     <button class="catBtn" data-cat="ai" data-sort="asc">Oldest</button>
   </div>
+  <nav class="pagination pagination-top" id="paginationTop-ai"></nav>
+
   <div class="controls" style="margin-top:10px;">
     <form class="page-jump" id="pageJumpForm">
       <input type="number" id="pageJumpInput" min="1" placeholder="Page #">
@@ -421,8 +429,7 @@ function updateUrlPage(p) {
   window.history.replaceState({ page: p }, '', url);
 }
 
-function renderPagination(totalPages) {
-  const nav = document.getElementById('pagination');
+function renderPaginationInto(nav, totalPages) {
   nav.innerHTML = '';
   if (totalPages <= 1) return;
 
@@ -458,6 +465,18 @@ function renderPagination(totalPages) {
   });
 
   addBtn('Next →', currentPage + 1, { disabled: currentPage === totalPages });
+}
+
+function renderPagination(totalPages) {
+  ['all', '3d', 'ai'].forEach(cat => {
+    const nav = document.getElementById('paginationTop-' + cat);
+    if (cat === categoryFilter) {
+      renderPaginationInto(nav, totalPages);
+    } else {
+      nav.innerHTML = '';
+    }
+  });
+  renderPaginationInto(document.getElementById('pagination'), totalPages);
 }
 
 function setCatAndSort(cat, newSortDesc) {
