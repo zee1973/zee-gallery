@@ -98,6 +98,40 @@
     padding: 60px 20px;
     font-size: 14px;
   }
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    max-width: 900px;
+    margin: 0 auto 50px;
+    padding: 0 24px;
+  }
+  .pagination button {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text);
+    min-width: 36px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .pagination button.active {
+    background: var(--accent);
+    color: #1a1a1a;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .pagination button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .pagination .ellipsis {
+    color: var(--text-dim);
+    padding: 8px 4px;
+    font-size: 13px;
+  }
   footer {
     text-align: center;
     padding: 40px 20px 60px;
@@ -119,12 +153,15 @@
 </header>
 
 <main class="grid" id="grid"></main>
+<nav class="pagination" id="pagination"></nav>
 
 <footer>Built with Claude</footer>
 
 <script>
 let videos = [];
 let sortDesc = false;
+let currentPage = 1;
+const PAGE_SIZE = 20;
 
 function getYouTubeId(url) {
   const m = url.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&?/]+)/);
@@ -135,21 +172,31 @@ function render() {
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
   const ordered = [...videos].sort((a, b) => sortDesc ? b.date - a.date : a.date - b.date);
-  document.getElementById('countLabel').textContent = ordered.length ? `${ordered.length} videos` : 'No videos added yet';
+  const totalPages = Math.max(1, Math.ceil(ordered.length / PAGE_SIZE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  document.getElementById('countLabel').textContent = ordered.length
+    ? `${ordered.length} videos — page ${currentPage} of ${totalPages}`
+    : 'No videos added yet';
 
   if (ordered.length === 0) {
     grid.innerHTML = '<div class="empty-note">No videos added yet. Edit <code>videos-data.json</code> and add your YouTube links to see them here.</div>';
+    renderPagination(0);
     return;
   }
 
-  ordered.forEach(v => {
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = ordered.slice(start, start + PAGE_SIZE);
+
+  pageItems.forEach(v => {
     const id = getYouTubeId(v.url);
     const card = document.createElement('div');
     card.className = 'video-card';
     const embed = document.createElement('div');
     embed.className = 'embed';
     if (id) {
-      embed.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" title="${v.title}" allowfullscreen></iframe>`;
+      embed.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" title="${v.title}" allowfullscreen loading="lazy"></iframe>`;
     } else {
       embed.innerHTML = `<a href="${v.url}" target="_blank" style="color:#d9b35b;display:flex;align-items:center;justify-content:center;height:100%;">Watch on YouTube →</a>`;
     }
@@ -160,16 +207,65 @@ function render() {
     card.appendChild(meta);
     grid.appendChild(card);
   });
+
+  renderPagination(totalPages);
+}
+
+function goToPage(p) {
+  currentPage = p;
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderPagination(totalPages) {
+  const nav = document.getElementById('pagination');
+  nav.innerHTML = '';
+  if (totalPages <= 1) return;
+
+  const addBtn = (label, page, opts = {}) => {
+    const btn = document.createElement('button');
+    btn.textContent = label;
+    if (opts.active) btn.classList.add('active');
+    if (opts.disabled) btn.disabled = true;
+    btn.addEventListener('click', () => goToPage(page));
+    nav.appendChild(btn);
+  };
+  const addEllipsis = () => {
+    const span = document.createElement('span');
+    span.className = 'ellipsis';
+    span.textContent = '…';
+    nav.appendChild(span);
+  };
+
+  addBtn('← Prev', currentPage - 1, { disabled: currentPage === 1 });
+
+  const windowSize = 2;
+  const pagesToShow = new Set([1, totalPages]);
+  for (let p = currentPage - windowSize; p <= currentPage + windowSize; p++) {
+    if (p >= 1 && p <= totalPages) pagesToShow.add(p);
+  }
+  const sorted = [...pagesToShow].sort((a, b) => a - b);
+
+  let prev = null;
+  sorted.forEach(p => {
+    if (prev !== null && p - prev > 1) addEllipsis();
+    addBtn(String(p), p, { active: p === currentPage });
+    prev = p;
+  });
+
+  addBtn('Next →', currentPage + 1, { disabled: currentPage === totalPages });
 }
 
 document.getElementById('sortNewest').addEventListener('click', () => {
   sortDesc = true;
+  currentPage = 1;
   document.getElementById('sortNewest').classList.add('active');
   document.getElementById('sortOldest').classList.remove('active');
   render();
 });
 document.getElementById('sortOldest').addEventListener('click', () => {
   sortDesc = false;
+  currentPage = 1;
   document.getElementById('sortOldest').classList.add('active');
   document.getElementById('sortNewest').classList.remove('active');
   render();
