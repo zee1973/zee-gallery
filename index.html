@@ -372,7 +372,18 @@ function render() {
 function goToPage(p) {
   currentPage = p;
   render();
+  updateUrlPage(p);
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateUrlPage(p) {
+  const url = new URL(window.location.href);
+  if (p > 1) {
+    url.searchParams.set('page', p);
+  } else {
+    url.searchParams.delete('page');
+  }
+  window.history.replaceState({ page: p }, '', url);
 }
 
 function renderPagination(totalPages) {
@@ -420,6 +431,7 @@ document.getElementById('sortNewest').addEventListener('click', () => {
   document.getElementById('sortNewest').classList.add('active');
   document.getElementById('sortOldest').classList.remove('active');
   render();
+  updateUrlPage(1);
 });
 document.getElementById('sortOldest').addEventListener('click', () => {
   sortDesc = false;
@@ -427,6 +439,7 @@ document.getElementById('sortOldest').addEventListener('click', () => {
   document.getElementById('sortOldest').classList.add('active');
   document.getElementById('sortNewest').classList.remove('active');
   render();
+  updateUrlPage(1);
 });
 
 function openShareMenu(anchorEl, url, title) {
@@ -499,9 +512,23 @@ document.getElementById('pageJumpInput').addEventListener('blur', (e) => {
   if (e.target.value === '') e.target.value = currentPage;
 });
 
+function readPageFromUrl() {
+  const p = parseInt(new URL(window.location.href).searchParams.get('page'), 10);
+  return (p && p > 0) ? p : 1;
+}
+
+window.addEventListener('popstate', () => {
+  currentPage = readPageFromUrl();
+  render();
+});
+
 fetch('videos-data.json')
   .then(r => r.json())
-  .then(json => { videos = json; render(); })
+  .then(json => {
+    videos = json;
+    currentPage = readPageFromUrl();
+    render();
+  })
   .catch(() => { videos = []; render(); });
 </script>
 
