@@ -82,6 +82,14 @@
     border-color: #f0c419;
     box-shadow: 0 0 0 1px #ef1c24, 0 2px 8px rgba(240,196,25,0.45);
   }
+  .controls.inactive-group button {
+    background: var(--bg-elevated);
+    color: var(--text-dim);
+    border-color: var(--border);
+    box-shadow: none;
+    font-weight: 400;
+    opacity: 0.55;
+  }
   .controls { margin-top: 14px; }
   .controls:first-of-type { margin-top: 0; }
   .group-label {
@@ -101,6 +109,11 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    margin: 6px 0 0;
+  }
+  .page-jump.inactive-group input,
+  .page-jump.inactive-group button {
+    opacity: 0.55;
   }
   .page-jump input {
     width: 60px;
@@ -368,7 +381,7 @@
   <h1>Zeewaqar Husnain</h1>
   <p id="countLabel">Loading…</p>
   <a class="back-link" href="images.html">See the images →</a>
-  <div class="controls">
+  <div class="controls" id="catGroup-all">
     <span class="group-label">All</span>
     <div class="controls-row">
       <button class="catBtn active" data-cat="all" data-sort="asc">Oldest</button>
@@ -376,8 +389,12 @@
     </div>
   </div>
   <nav class="pagination pagination-top" id="paginationTop-all"></nav>
+  <form class="page-jump" id="pageJumpForm-all" data-cat="all">
+    <input type="number" id="pageJumpInput-all" min="1" placeholder="Page #">
+    <button type="submit">Go</button>
+  </form>
 
-  <div class="controls">
+  <div class="controls" id="catGroup-3d">
     <span class="group-label">3D</span>
     <div class="controls-row">
       <button class="catBtn" data-cat="3d" data-sort="asc">Oldest</button>
@@ -385,8 +402,12 @@
     </div>
   </div>
   <nav class="pagination pagination-top" id="paginationTop-3d"></nav>
+  <form class="page-jump" id="pageJumpForm-3d" data-cat="3d">
+    <input type="number" id="pageJumpInput-3d" min="1" placeholder="Page #">
+    <button type="submit">Go</button>
+  </form>
 
-  <div class="controls">
+  <div class="controls" id="catGroup-ai">
     <span class="group-label">AI</span>
     <div class="controls-row">
       <button class="catBtn" data-cat="ai" data-sort="asc">Oldest</button>
@@ -394,13 +415,10 @@
     </div>
   </div>
   <nav class="pagination pagination-top" id="paginationTop-ai"></nav>
-
-  <div class="controls">
-    <form class="page-jump" id="pageJumpForm">
-      <input type="number" id="pageJumpInput" min="1" placeholder="Page #">
-      <button type="submit">Go</button>
-    </form>
-  </div>
+  <form class="page-jump" id="pageJumpForm-ai" data-cat="ai">
+    <input type="number" id="pageJumpInput-ai" min="1" placeholder="Page #">
+    <button type="submit">Go</button>
+  </form>
 </header>
 
 <div class="content-area">
@@ -464,11 +482,7 @@ function render() {
     ? `${oldestFirst.length} ${categoryLabel} — page ${currentPage} of ${totalPages}`
     : 'No videos found';
 
-  const pageJumpInput = document.getElementById('pageJumpInput');
-  if (document.activeElement !== pageJumpInput) {
-    pageJumpInput.value = currentPage;
-  }
-  pageJumpInput.max = totalPages;
+  updatePageJumpInputs();
 
   if (oldestFirst.length === 0) {
     grid.innerHTML = '<div class="empty-note">No videos added yet. Edit <code>videos-data.json</code> and add your YouTube links to see them here.</div>';
@@ -573,10 +587,13 @@ function renderPaginationInto(nav, totalPages, page, onPageClick, isLive) {
 function renderPagination(totalPages) {
   // Each group's own pagination bar is always visible, with its own
   // independent page count and current page, regardless of which
-  // category is currently driving the grid below.
+  // category is currently driving the grid below. Only the selected
+  // category's whole control block (sort buttons + pagination + page-jump)
+  // is shown "live"; the other two are dimmed and inert-looking.
   ['all', '3d', 'ai'].forEach(cat => {
     const nav = document.getElementById('paginationTop-' + cat);
-    const catTotal = (cat === categoryFilter)
+    const isLive = cat === categoryFilter;
+    const catTotal = isLive
       ? totalPages
       : Math.max(1, Math.ceil(applyCategoryFilter(videos, cat).length / PAGE_SIZE));
     let catPage = perCategoryPage[cat] || 1;
@@ -589,9 +606,25 @@ function renderPagination(totalPages) {
       } else {
         goToPage(p);
       }
-    }, cat === categoryFilter);
+    }, isLive);
+
+    const group = document.getElementById('catGroup-' + cat);
+    if (group) group.classList.toggle('inactive-group', !isLive);
+    const jumpForm = document.getElementById('pageJumpForm-' + cat);
+    if (jumpForm) jumpForm.classList.toggle('inactive-group', !isLive);
+
+    const input = document.getElementById('pageJumpInput-' + cat);
+    if (input) {
+      if (document.activeElement !== input) input.value = catPage;
+      input.max = catTotal;
+    }
   });
   renderPaginationInto(document.getElementById('pagination'), totalPages, currentPage, goToPage, true);
+}
+
+function updatePageJumpInputs() {
+  // Handled inside renderPagination, which knows each category's own
+  // total pages; kept as a no-op call site for clarity in render().
 }
 
 function setCatAndSort(cat, newSortDesc, targetPage) {
@@ -676,21 +709,33 @@ document.getElementById('linkBarClose').addEventListener('click', () => {
   document.getElementById('linkBar').classList.remove('show');
 });
 
-document.getElementById('pageJumpForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const input = document.getElementById('pageJumpInput');
-  let p = parseInt(input.value, 10);
-  if (!p || isNaN(p)) return;
-  p = Math.min(Math.max(p, 1), totalPagesGlobal);
-  goToPage(p);
-  input.blur();
-});
+['all', '3d', 'ai'].forEach(cat => {
+  const form = document.getElementById('pageJumpForm-' + cat);
+  const input = document.getElementById('pageJumpInput-' + cat);
+  if (!form || !input) return;
 
-document.getElementById('pageJumpInput').addEventListener('focus', (e) => {
-  e.target.value = '';
-});
-document.getElementById('pageJumpInput').addEventListener('blur', (e) => {
-  if (e.target.value === '') e.target.value = currentPage;
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let p = parseInt(input.value, 10);
+    if (!p || isNaN(p)) return;
+    const catTotal = (cat === categoryFilter)
+      ? totalPagesGlobal
+      : Math.max(1, Math.ceil(applyCategoryFilter(videos, cat).length / PAGE_SIZE));
+    p = Math.min(Math.max(p, 1), catTotal);
+    if (cat !== categoryFilter) {
+      setCatAndSort(cat, sortDesc, p);
+    } else {
+      goToPage(p);
+    }
+    input.blur();
+  });
+
+  input.addEventListener('focus', (e) => {
+    e.target.value = '';
+  });
+  input.addEventListener('blur', (e) => {
+    if (e.target.value === '') e.target.value = perCategoryPage[cat] || 1;
+  });
 });
 
 function readPageFromUrl() {
