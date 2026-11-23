@@ -171,7 +171,7 @@ function getYouTubeId(url) {
 function render() {
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
-  const ordered = [...videos].sort((a, b) => sortDesc ? b.date - a.date : a.date - b.date);
+  const ordered = [...videos].sort((a, b) => sortDesc ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date));
   const totalPages = Math.max(1, Math.ceil(ordered.length / PAGE_SIZE));
   if (currentPage > totalPages) currentPage = totalPages;
   if (currentPage < 1) currentPage = 1;
