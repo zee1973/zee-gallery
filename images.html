@@ -60,6 +60,35 @@
     color: #1a1a1a;
     border-color: var(--accent);
   }
+  .page-jump {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .page-jump input {
+    width: 70px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    text-align: center;
+  }
+  .page-jump input::-webkit-outer-spin-button,
+  .page-jump input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .page-jump button {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+  }
   .videos-link {
     display: inline-block;
     margin-top: 14px;
@@ -275,6 +304,10 @@
   <div class="controls">
     <button id="sortNewest" class="active">Newest first</button>
     <button id="sortOldest">Oldest first</button>
+    <form class="page-jump" id="pageJumpForm">
+      <input type="number" id="pageJumpInput" min="1" placeholder="Page #">
+      <button type="submit">Go</button>
+    </form>
   </div>
   <div>
     <a class="videos-link" href="index.html">← Back to videos</a>
@@ -308,6 +341,7 @@ let currentOrder = [];
 let sortDesc = true; // newest first by default
 let currentIndex = 0;
 let currentPage = 1;
+let totalPagesGlobal = 1;
 const PAGE_SIZE = 40;
 
 function absoluteImageUrl(file) {
@@ -368,6 +402,13 @@ function render() {
   document.getElementById('countLabel').textContent = currentOrder.length
     ? `${currentOrder.length} pieces — page ${currentPage} of ${totalPages}`
     : 'No images yet';
+
+  totalPagesGlobal = totalPages;
+  const pageJumpInput = document.getElementById('pageJumpInput');
+  if (document.activeElement !== pageJumpInput) {
+    pageJumpInput.value = currentPage;
+  }
+  pageJumpInput.max = totalPages;
 
   const start = (currentPage - 1) * PAGE_SIZE;
   const pageItems = currentOrder.slice(start, start + PAGE_SIZE);
@@ -511,6 +552,23 @@ document.getElementById('sortOldest').addEventListener('click', () => {
   document.getElementById('sortNewest').classList.remove('active');
   render();
   updateUrlPage(1);
+});
+
+document.getElementById('pageJumpForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const input = document.getElementById('pageJumpInput');
+  let p = parseInt(input.value, 10);
+  if (!p || isNaN(p)) return;
+  p = Math.min(Math.max(p, 1), totalPagesGlobal);
+  goToPage(p);
+  input.blur();
+});
+
+document.getElementById('pageJumpInput').addEventListener('focus', (e) => {
+  e.target.value = '';
+});
+document.getElementById('pageJumpInput').addEventListener('blur', (e) => {
+  if (e.target.value === '') e.target.value = currentPage;
 });
 
 function readPageFromUrl() {
