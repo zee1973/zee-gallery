@@ -30,7 +30,7 @@
     padding: 32px 18px;
     text-align: left;
     border-bottom: none;
-    border-right: 1px solid var(--border);
+    border-right: 1.5px solid #3a1414;
     position: sticky;
     top: 0;
     height: 100vh;
@@ -60,21 +60,24 @@
   }
   .controls button {
     background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    color: var(--text);
+    border: 1.5px solid #3a1414;
+    color: #f0c419;
     padding: 8px 18px;
     border-radius: 20px;
     font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.15s ease;
   }
   .controls button:hover {
-    border-color: var(--accent);
+    border-color: #f0c419;
+    color: #fff;
   }
   .controls button.active {
-    background: var(--accent);
-    color: #1a1a1a;
-    border-color: var(--accent);
+    background: linear-gradient(135deg, #ef1c24, #c4121a);
+    color: #fff;
+    border-color: #f0c419;
+    box-shadow: 0 0 0 1px #f0c419, 0 2px 8px rgba(239,28,36,0.5);
   }
   .page-jump {
     display: flex;
@@ -85,12 +88,16 @@
   .page-jump input {
     width: 70px;
     background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    color: var(--text);
+    border: 1.5px solid #3a1414;
+    color: #fff;
     padding: 8px 10px;
     border-radius: 20px;
     font-size: 13px;
     text-align: center;
+  }
+  .page-jump input:focus {
+    outline: none;
+    border-color: #f0c419;
   }
   .page-jump input::-webkit-outer-spin-button,
   .page-jump input::-webkit-inner-spin-button {
@@ -98,23 +105,29 @@
     margin: 0;
   }
   .page-jump button {
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    color: var(--text);
+    background: linear-gradient(135deg, #ef1c24, #c4121a);
+    border: 1.5px solid #f0c419;
+    color: #fff;
     padding: 8px 18px;
     border-radius: 20px;
     font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .page-jump button:hover {
+    box-shadow: 0 2px 8px rgba(239,28,36,0.5);
   }
   .videos-link {
     display: inline-block;
     margin-top: 14px;
-    color: var(--accent);
+    color: #f0c419;
+    font-weight: 600;
     font-size: 13px;
     text-decoration: none;
     border-bottom: 1px solid transparent;
   }
-  .videos-link:hover { border-bottom-color: var(--accent); }
+  .videos-link:hover { color: #fff; border-bottom-color: #f0c419; }
 
   .gallery {
     display: grid;
@@ -226,26 +239,33 @@
   #paginationTop { margin: 24px auto 0; }
   .pagination button {
     background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    color: var(--text);
+    border: 1.5px solid #3a1414;
+    color: #f0c419;
     min-width: 36px;
     padding: 8px 10px;
     border-radius: 6px;
     font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .pagination button:hover:not(:disabled) {
+    border-color: #f0c419;
+    color: #fff;
   }
   .pagination button.active {
-    background: var(--accent);
-    color: #1a1a1a;
-    border-color: var(--accent);
-    font-weight: 600;
+    background: linear-gradient(135deg, #ef1c24, #c4121a);
+    color: #fff;
+    border-color: #f0c419;
+    font-weight: 700;
+    box-shadow: 0 0 0 1px #f0c419, 0 2px 8px rgba(239,28,36,0.5);
   }
   .pagination button:disabled {
     opacity: 0.35;
     cursor: default;
   }
   .pagination .ellipsis {
-    color: var(--text-dim);
+    color: #f0c419;
     padding: 8px 4px;
     font-size: 13px;
   }
