@@ -493,7 +493,10 @@ document.getElementById('pageJumpForm').addEventListener('submit', (e) => {
 });
 
 document.getElementById('pageJumpInput').addEventListener('focus', (e) => {
-  e.target.select();
+  e.target.value = '';
+});
+document.getElementById('pageJumpInput').addEventListener('blur', (e) => {
+  if (e.target.value === '') e.target.value = currentPage;
 });
 
 fetch('videos-data.json')
