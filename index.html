@@ -53,6 +53,14 @@
     cursor: pointer;
   }
   .controls button.active { background: var(--accent); color: #1a1a1a; border-color: var(--accent); }
+  .controls { flex-wrap: wrap; row-gap: 10px; }
+  .group-label {
+    color: var(--text-dim);
+    font-size: 13px;
+    align-self: center;
+    margin-right: -2px;
+  }
+  .group-gap { width: 14px; }
   .page-jump {
     display: flex;
     align-items: center;
@@ -272,17 +280,23 @@
   <p id="countLabel">Loading…</p>
   <a class="back-link" href="images.html">See the images →</a>
   <div class="controls">
-    <button id="sortNewest">Newest first</button>
-    <button id="sortOldest" class="active">Oldest first</button>
+    <span class="group-label">All</span>
+    <button class="catBtn" data-cat="all" data-sort="desc">Newest</button>
+    <button class="catBtn active" data-cat="all" data-sort="asc">Oldest</button>
+    <span class="group-gap"></span>
+    <span class="group-label">3D</span>
+    <button class="catBtn" data-cat="3d" data-sort="desc">Newest</button>
+    <button class="catBtn" data-cat="3d" data-sort="asc">Oldest</button>
+    <span class="group-gap"></span>
+    <span class="group-label">AI</span>
+    <button class="catBtn" data-cat="ai" data-sort="desc">Newest</button>
+    <button class="catBtn" data-cat="ai" data-sort="asc">Oldest</button>
+  </div>
+  <div class="controls" style="margin-top:10px;">
     <form class="page-jump" id="pageJumpForm">
       <input type="number" id="pageJumpInput" min="1" placeholder="Page #">
       <button type="submit">Go</button>
     </form>
-  </div>
-  <div class="controls" style="margin-top:10px;">
-    <button id="filterAll" class="active">All videos</button>
-    <button id="filter3D">Do you want to see 3D?</button>
-    <button id="filterAI">Do you want to see AI?</button>
   </div>
 </header>
 
@@ -441,37 +455,35 @@ function renderPagination(totalPages) {
   addBtn('Next →', currentPage + 1, { disabled: currentPage === totalPages });
 }
 
-document.getElementById('sortNewest').addEventListener('click', () => {
-  if (sortDesc) return;
-  sortDesc = true;
-  currentPage = totalPagesGlobal - currentPage + 1;
-  document.getElementById('sortNewest').classList.add('active');
-  document.getElementById('sortOldest').classList.remove('active');
-  render();
-  updateUrlPage(currentPage);
-});
-document.getElementById('sortOldest').addEventListener('click', () => {
-  if (!sortDesc) return;
-  sortDesc = false;
-  currentPage = totalPagesGlobal - currentPage + 1;
-  document.getElementById('sortOldest').classList.add('active');
-  document.getElementById('sortNewest').classList.remove('active');
-  render();
-  updateUrlPage(currentPage);
-});
+function setCatAndSort(cat, newSortDesc) {
+  const sameCategory = (cat === categoryFilter);
+  const sortChanged = (newSortDesc !== sortDesc);
 
-function setCategoryFilter(cat) {
+  if (sameCategory && sortChanged) {
+    // Mirror the page within the same filtered set when only sort order flips.
+    currentPage = totalPagesGlobal - currentPage + 1;
+  } else if (!sameCategory) {
+    currentPage = 1;
+  }
+  // If neither category nor sort changed (clicking the already-active button), leave page as-is.
+
   categoryFilter = cat;
-  currentPage = 1;
-  ['filterAll', 'filter3D', 'filterAI'].forEach(id => document.getElementById(id).classList.remove('active'));
-  const activeId = cat === '3d' ? 'filter3D' : cat === 'ai' ? 'filterAI' : 'filterAll';
-  document.getElementById(activeId).classList.add('active');
+  sortDesc = newSortDesc;
+
+  document.querySelectorAll('.catBtn').forEach(btn => {
+    const isActive = btn.dataset.cat === cat && btn.dataset.sort === (newSortDesc ? 'desc' : 'asc');
+    btn.classList.toggle('active', isActive);
+  });
+
   render();
-  updateUrlPage(1);
+  updateUrlPage(currentPage);
 }
-document.getElementById('filterAll').addEventListener('click', () => setCategoryFilter('all'));
-document.getElementById('filter3D').addEventListener('click', () => setCategoryFilter('3d'));
-document.getElementById('filterAI').addEventListener('click', () => setCategoryFilter('ai'));
+
+document.querySelectorAll('.catBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setCatAndSort(btn.dataset.cat, btn.dataset.sort === 'desc');
+  });
+});
 
 function openShareMenu(anchorEl, url, title) {
   const menu = document.getElementById('shareMenu');
