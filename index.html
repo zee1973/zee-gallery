@@ -20,49 +20,66 @@
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
+  .page-layout {
+    display: flex;
+    align-items: flex-start;
+  }
   header {
-    padding: 48px 24px 24px;
-    text-align: center;
-    border-bottom: 1px solid var(--border);
+    flex: 0 0 260px;
+    width: 260px;
+    padding: 24px 18px;
+    text-align: left;
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
   }
   header h1 {
-    font-size: 28px;
+    font-size: 20px;
     font-weight: 600;
     margin: 0 0 8px;
   }
-  header p { color: var(--text-dim); font-size: 14px; margin: 0 0 16px; }
+  header p { color: var(--text-dim); font-size: 13px; margin: 0 0 14px; }
   .back-link {
     display: inline-block;
     color: var(--accent);
     font-size: 13px;
     text-decoration: none;
+    margin-bottom: 16px;
   }
+  .content-area { flex: 1 1 auto; min-width: 0; }
   .controls {
     display: flex;
-    justify-content: center;
-    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
     margin-top: 18px;
   }
   .controls button {
     background: var(--bg-elevated);
     border: 1px solid var(--border);
     color: var(--text);
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-size: 13px;
+    padding: 7px 14px;
+    border-radius: 16px;
+    font-size: 12.5px;
     cursor: pointer;
   }
   .controls button.active { background: var(--accent); color: #1a1a1a; border-color: var(--accent); }
   .catBtn.active { background: #3fc966; color: #0b0b0d; border-color: #3fc966; }
-  .controls { flex-wrap: wrap; row-gap: 10px; margin-top: 10px; }
-  .controls:first-of-type { margin-top: 18px; }
+  .controls { margin-top: 14px; }
+  .controls:first-of-type { margin-top: 0; }
   .group-label {
     color: var(--text-dim);
-    font-size: 13px;
-    align-self: center;
-    width: 34px;
-    text-align: right;
-    margin-right: 2px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    width: 100%;
+    margin-bottom: 2px;
+  }
+  .controls-row {
+    display: flex;
+    gap: 8px;
   }
   .page-jump {
     display: flex;
@@ -70,13 +87,13 @@
     gap: 6px;
   }
   .page-jump input {
-    width: 70px;
+    width: 60px;
     background: var(--bg-elevated);
     border: 1px solid var(--border);
     color: var(--text);
-    padding: 8px 10px;
-    border-radius: 20px;
-    font-size: 13px;
+    padding: 7px 10px;
+    border-radius: 16px;
+    font-size: 12.5px;
     text-align: center;
   }
   .page-jump input::-webkit-outer-spin-button,
@@ -88,9 +105,9 @@
     background: var(--bg-elevated);
     border: 1px solid var(--border);
     color: var(--text);
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-size: 13px;
+    padding: 7px 14px;
+    border-radius: 16px;
+    font-size: 12.5px;
     cursor: pointer;
   }
 
@@ -147,8 +164,19 @@
     margin: 0 auto 50px;
     padding: 0 24px;
   }
-  .pagination-top { margin: 8px auto 0; }
+  .pagination-top {
+    margin: 6px 0 0;
+    justify-content: flex-start;
+    padding: 0;
+    max-width: none;
+    gap: 5px;
+  }
   .pagination-top:empty { display: none; }
+  .pagination-top button {
+    min-width: 28px;
+    padding: 5px 7px;
+    font-size: 11.5px;
+  }
   .pagination button {
     background: var(--bg-elevated);
     border: 1px solid var(--border);
@@ -276,6 +304,22 @@
     width: 100%;
   }
   .share-menu a:hover, .share-menu button:hover { background: var(--bg); }
+
+  @media (max-width: 820px) {
+    .page-layout { flex-direction: column; }
+    header {
+      position: static;
+      height: auto;
+      width: 100%;
+      flex: 1 1 auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .controls { align-items: center; }
+    .group-label { text-align: center; }
+    .pagination-top { justify-content: center; }
+  }
 </style>
 </head>
 <body>
@@ -286,32 +330,39 @@
   <button class="close-btn" id="linkBarClose">✕</button>
 </div>
 
+<div class="page-layout">
 <header>
   <h1>Zeewaqar Husnain</h1>
   <p id="countLabel">Loading…</p>
   <a class="back-link" href="images.html">See the images →</a>
   <div class="controls">
     <span class="group-label">All</span>
-    <button class="catBtn active" data-cat="all" data-sort="asc">Oldest</button>
-    <button class="catBtn" data-cat="all" data-sort="desc">Latest</button>
+    <div class="controls-row">
+      <button class="catBtn active" data-cat="all" data-sort="asc">Oldest</button>
+      <button class="catBtn" data-cat="all" data-sort="desc">Latest</button>
+    </div>
   </div>
   <nav class="pagination pagination-top" id="paginationTop-all"></nav>
 
   <div class="controls">
     <span class="group-label">3D</span>
-    <button class="catBtn" data-cat="3d" data-sort="asc">Oldest</button>
-    <button class="catBtn" data-cat="3d" data-sort="desc">Latest</button>
+    <div class="controls-row">
+      <button class="catBtn" data-cat="3d" data-sort="asc">Oldest</button>
+      <button class="catBtn" data-cat="3d" data-sort="desc">Latest</button>
+    </div>
   </div>
   <nav class="pagination pagination-top" id="paginationTop-3d"></nav>
 
   <div class="controls">
     <span class="group-label">AI</span>
-    <button class="catBtn" data-cat="ai" data-sort="asc">Oldest</button>
-    <button class="catBtn" data-cat="ai" data-sort="desc">Latest</button>
+    <div class="controls-row">
+      <button class="catBtn" data-cat="ai" data-sort="asc">Oldest</button>
+      <button class="catBtn" data-cat="ai" data-sort="desc">Latest</button>
+    </div>
   </div>
   <nav class="pagination pagination-top" id="paginationTop-ai"></nav>
 
-  <div class="controls" style="margin-top:10px;">
+  <div class="controls">
     <form class="page-jump" id="pageJumpForm">
       <input type="number" id="pageJumpInput" min="1" placeholder="Page #">
       <button type="submit">Go</button>
@@ -319,8 +370,11 @@
   </div>
 </header>
 
+<div class="content-area">
 <main class="grid" id="grid"></main>
 <nav class="pagination" id="pagination"></nav>
+</div>
+</div>
 
 <div class="share-menu" id="shareMenu">
   <a id="shareWhatsapp" target="_blank" rel="noopener">💬 WhatsApp</a>
