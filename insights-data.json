@@ -1,0 +1,19 @@
+{
+  "egypt": [
+    {"keyword": "ancient egypt", "monthlySearch": 1664721, "topMarkets": "PK 19%, IN 8%, VN 8%"},
+    {"keyword": "ancient history", "monthlySearch": 3112337, "topMarkets": "IN 22%, PK 21%, US 7%"},
+    {"keyword": "egypt history", "monthlySearch": 983912, "topMarkets": "PK 28%, IN 13%, BD 8%"},
+    {"keyword": "history of egypt", "monthlySearch": 758949, "topMarkets": "PK 36%, IN 27%, BD 6%"},
+    {"keyword": "egypt", "monthlySearch": 5893130, "topMarkets": "PK 14%, VN 12%, IN 10%"},
+    {"keyword": "ancient egypt for kids", "monthlySearch": 8128, "topMarkets": null}
+  ],
+  "ai_film": [
+    {"keyword": "ai film", "monthlySearch": 4442941, "topMarkets": "PK 19%, VN 11%, US 10%"},
+    {"keyword": "ai video generator", "monthlySearch": 8540105, "topMarkets": "IN 18%, PK 13%, BD 12%"},
+    {"keyword": "ai short film", "monthlySearch": 1343379, "topMarkets": "PK 18%, IN 13%, US 10%"},
+    {"keyword": "cinematic ai video", "monthlySearch": 455958, "topMarkets": "PK 29%, US 21%, CA 14%"},
+    {"keyword": "ai commercial", "monthlySearch": 548461, "topMarkets": "US 23%, PK 14%, PH 14%"},
+    {"keyword": "ai filmmaking", "monthlySearch": 878947, "topMarkets": "IN 25%, PK 10%, US 9%"},
+    {"keyword": "cinematic ai film", "monthlySearch": 182053, "topMarkets": null}
+  ]
+}
