@@ -113,8 +113,8 @@
   <p id="countLabel">Loading…</p>
   <a class="back-link" href="index.html">← Back to gallery</a>
   <div class="controls">
-    <button id="sortNewest" class="active">Newest first</button>
-    <button id="sortOldest">Oldest first</button>
+    <button id="sortNewest">Newest first</button>
+    <button id="sortOldest" class="active">Oldest first</button>
   </div>
 </header>
 
@@ -124,7 +124,7 @@
 
 <script>
 let videos = [];
-let sortDesc = true;
+let sortDesc = false;
 
 function getYouTubeId(url) {
   const m = url.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&?/]+)/);
