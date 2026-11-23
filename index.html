@@ -279,6 +279,11 @@
       <button type="submit">Go</button>
     </form>
   </div>
+  <div class="controls" style="margin-top:10px;">
+    <button id="filterAll" class="active">All videos</button>
+    <button id="filter3D">Do you want to see 3D?</button>
+    <button id="filterAI">Do you want to see AI?</button>
+  </div>
 </header>
 
 <main class="grid" id="grid"></main>
@@ -305,17 +310,31 @@ function getYouTubeId(url) {
   return m ? m[1] : null;
 }
 
+const CUTOFF_VIDEO_ID = 'cxPiYux-71U'; // last 3D video in oldest-first order; everything after is AI
+let categoryFilter = 'all'; // 'all' | '3d' | 'ai'
+
+function applyCategoryFilter(list) {
+  if (categoryFilter === 'all') return list;
+  const oldestFirst = [...list].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const cutoffIdx = oldestFirst.findIndex(v => getYouTubeId(v.url) === CUTOFF_VIDEO_ID);
+  if (cutoffIdx === -1) return list; // cutoff video not found, don't filter
+  const threeD = new Set(oldestFirst.slice(0, cutoffIdx + 1).map(v => v.url));
+  return list.filter(v => categoryFilter === '3d' ? threeD.has(v.url) : !threeD.has(v.url));
+}
+
 function render() {
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
-  const ordered = [...videos].sort((a, b) => sortDesc ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date));
+  const filtered = applyCategoryFilter(videos);
+  const ordered = [...filtered].sort((a, b) => sortDesc ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date));
   const totalPages = Math.max(1, Math.ceil(ordered.length / PAGE_SIZE));
   if (currentPage > totalPages) currentPage = totalPages;
   if (currentPage < 1) currentPage = 1;
 
+  const categoryLabel = categoryFilter === '3d' ? '3D videos' : categoryFilter === 'ai' ? 'AI videos' : 'videos';
   document.getElementById('countLabel').textContent = ordered.length
-    ? `${ordered.length} videos — page ${currentPage} of ${totalPages}`
-    : 'No videos added yet';
+    ? `${ordered.length} ${categoryLabel} — page ${currentPage} of ${totalPages}`
+    : 'No videos found';
 
   const pageJumpInput = document.getElementById('pageJumpInput');
   if (document.activeElement !== pageJumpInput) {
@@ -438,6 +457,19 @@ document.getElementById('sortOldest').addEventListener('click', () => {
   render();
   updateUrlPage(1);
 });
+
+function setCategoryFilter(cat) {
+  categoryFilter = cat;
+  currentPage = 1;
+  ['filterAll', 'filter3D', 'filterAI'].forEach(id => document.getElementById(id).classList.remove('active'));
+  const activeId = cat === '3d' ? 'filter3D' : cat === 'ai' ? 'filterAI' : 'filterAll';
+  document.getElementById(activeId).classList.add('active');
+  render();
+  updateUrlPage(1);
+}
+document.getElementById('filterAll').addEventListener('click', () => setCategoryFilter('all'));
+document.getElementById('filter3D').addEventListener('click', () => setCategoryFilter('3d'));
+document.getElementById('filterAI').addEventListener('click', () => setCategoryFilter('ai'));
 
 function openShareMenu(anchorEl, url, title) {
   const menu = document.getElementById('shareMenu');
