@@ -58,29 +58,34 @@
     gap: 6px;
     margin-top: 18px;
   }
-  /* Each category block gets its own accent color so you can tell
-     at a glance which section (All / 3D / AI) you're looking at. */
-  #catGroup-all, #paginationTop-all, #pageJumpForm-all {
+  /* Each category section gets its own solid-tinted background so you
+     can tell at a glance which section (All / 3D / AI) you're looking
+     at, from the sort buttons down through its pagination and Go button. */
+  #catSection-all {
     --cat-main: #ef1c24;
     --cat-dark: #c4121a;
     --cat-glow: rgba(239,28,36,0.5);
   }
-  #catGroup-3d, #paginationTop-3d, #pageJumpForm-3d {
+  #catSection-3d {
     --cat-main: #2f8cf0;
     --cat-dark: #1c63c4;
     --cat-glow: rgba(47,140,240,0.5);
   }
-  #catGroup-ai, #paginationTop-ai, #pageJumpForm-ai {
+  #catSection-ai {
     --cat-main: #a444f0;
     --cat-dark: #7a26c4;
     --cat-glow: rgba(164,68,240,0.5);
   }
-  .controls {
-    background: color-mix(in srgb, var(--cat-main) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--cat-main) 35%, transparent);
+  .cat-section {
+    background: color-mix(in srgb, var(--cat-main) 24%, var(--bg));
+    border: 1px solid color-mix(in srgb, var(--cat-main) 55%, transparent);
     border-radius: 14px;
-    padding: 10px 10px 4px;
+    padding: 10px 10px 12px;
+    margin-top: 14px;
   }
+  .cat-section:first-of-type { margin-top: 0; }
+  .cat-section .pagination-top,
+  .cat-section .page-jump { margin-left: 2px; margin-right: 2px; }
   .controls button {
     background: var(--bg-elevated);
     border: 1.5px solid #3a1414;
@@ -105,10 +110,11 @@
     border-color: #f0c419;
     box-shadow: 0 0 0 1px var(--cat-main), 0 2px 8px rgba(240,196,25,0.45);
   }
-  .controls.inactive-group {
-    background: transparent;
+  .cat-section.inactive-group {
+    background: var(--bg-elevated);
     border-color: var(--border);
   }
+  .cat-section.inactive-group .group-label { color: var(--text-dim); }
   .controls.inactive-group button {
     background: var(--bg-elevated);
     color: var(--text-dim);
@@ -117,8 +123,6 @@
     font-weight: 400;
     opacity: 0.55;
   }
-  .controls { margin-top: 14px; }
-  .controls:first-of-type { margin-top: 0; }
   .group-label {
     color: var(--cat-main);
     font-size: 12px;
@@ -242,6 +246,13 @@
     --cat-dark: #7a26c4;
     --cat-glow: rgba(164,68,240,0.5);
   }
+  .bottom-page-panel {
+    background: color-mix(in srgb, var(--cat-main, #f0c419) 18%, var(--bg));
+    border-top: 1px solid color-mix(in srgb, var(--cat-main, #f0c419) 45%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--cat-main, #f0c419) 45%, transparent);
+    padding: 16px 0 24px;
+    margin: 0 0 40px;
+  }
   .bottom-page-label {
     text-align: center;
     color: var(--cat-main, #f0c419);
@@ -249,7 +260,7 @@
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin: 8px auto 10px;
+    margin: 0 auto 10px;
   }
   .pagination {
     display: flex;
@@ -257,7 +268,7 @@
     justify-content: center;
     gap: 8px;
     max-width: 900px;
-    margin: 0 auto 50px;
+    margin: 0 auto;
     padding: 0 24px;
   }
   .pagination-top {
@@ -445,50 +456,58 @@
   <h1>Zeewaqar Husnain</h1>
   <p id="countLabel">Loading…</p>
   <a class="back-link" href="images.html">See the images →</a>
-  <div class="controls" id="catGroup-all">
-    <span class="group-label">All</span>
-    <div class="controls-row">
-      <button class="catBtn active" data-cat="all" data-sort="asc">Oldest</button>
-      <button class="catBtn" data-cat="all" data-sort="desc">Latest</button>
+  <div class="cat-section" id="catSection-all">
+    <div class="controls" id="catGroup-all">
+      <span class="group-label">All</span>
+      <div class="controls-row">
+        <button class="catBtn active" data-cat="all" data-sort="asc">Oldest</button>
+        <button class="catBtn" data-cat="all" data-sort="desc">Latest</button>
+      </div>
     </div>
+    <nav class="pagination pagination-top" id="paginationTop-all"></nav>
+    <form class="page-jump" id="pageJumpForm-all" data-cat="all">
+      <input type="number" id="pageJumpInput-all" min="1" placeholder="Page #">
+      <button type="submit">Go</button>
+    </form>
   </div>
-  <nav class="pagination pagination-top" id="paginationTop-all"></nav>
-  <form class="page-jump" id="pageJumpForm-all" data-cat="all">
-    <input type="number" id="pageJumpInput-all" min="1" placeholder="Page #">
-    <button type="submit">Go</button>
-  </form>
 
-  <div class="controls" id="catGroup-3d">
-    <span class="group-label">3D</span>
-    <div class="controls-row">
-      <button class="catBtn" data-cat="3d" data-sort="asc">Oldest</button>
-      <button class="catBtn" data-cat="3d" data-sort="desc">Latest</button>
+  <div class="cat-section" id="catSection-3d">
+    <div class="controls" id="catGroup-3d">
+      <span class="group-label">3D</span>
+      <div class="controls-row">
+        <button class="catBtn" data-cat="3d" data-sort="asc">Oldest</button>
+        <button class="catBtn" data-cat="3d" data-sort="desc">Latest</button>
+      </div>
     </div>
+    <nav class="pagination pagination-top" id="paginationTop-3d"></nav>
+    <form class="page-jump" id="pageJumpForm-3d" data-cat="3d">
+      <input type="number" id="pageJumpInput-3d" min="1" placeholder="Page #">
+      <button type="submit">Go</button>
+    </form>
   </div>
-  <nav class="pagination pagination-top" id="paginationTop-3d"></nav>
-  <form class="page-jump" id="pageJumpForm-3d" data-cat="3d">
-    <input type="number" id="pageJumpInput-3d" min="1" placeholder="Page #">
-    <button type="submit">Go</button>
-  </form>
 
-  <div class="controls" id="catGroup-ai">
-    <span class="group-label">AI</span>
-    <div class="controls-row">
-      <button class="catBtn" data-cat="ai" data-sort="asc">Oldest</button>
-      <button class="catBtn" data-cat="ai" data-sort="desc">Latest</button>
+  <div class="cat-section" id="catSection-ai">
+    <div class="controls" id="catGroup-ai">
+      <span class="group-label">AI</span>
+      <div class="controls-row">
+        <button class="catBtn" data-cat="ai" data-sort="asc">Oldest</button>
+        <button class="catBtn" data-cat="ai" data-sort="desc">Latest</button>
+      </div>
     </div>
+    <nav class="pagination pagination-top" id="paginationTop-ai"></nav>
+    <form class="page-jump" id="pageJumpForm-ai" data-cat="ai">
+      <input type="number" id="pageJumpInput-ai" min="1" placeholder="Page #">
+      <button type="submit">Go</button>
+    </form>
   </div>
-  <nav class="pagination pagination-top" id="paginationTop-ai"></nav>
-  <form class="page-jump" id="pageJumpForm-ai" data-cat="ai">
-    <input type="number" id="pageJumpInput-ai" min="1" placeholder="Page #">
-    <button type="submit">Go</button>
-  </form>
 </header>
 
 <div class="content-area">
 <main class="grid" id="grid"></main>
+<div class="bottom-page-panel">
 <p class="bottom-page-label" id="bottomPageLabel"></p>
 <nav class="pagination" id="pagination"></nav>
+</div>
 </div>
 </div>
 
@@ -678,6 +697,8 @@ function renderPagination(totalPages) {
       }
     }, isLive);
 
+    const section = document.getElementById('catSection-' + cat);
+    if (section) section.classList.toggle('inactive-group', !isLive);
     const group = document.getElementById('catGroup-' + cat);
     if (group) group.classList.toggle('inactive-group', !isLive);
     const jumpForm = document.getElementById('pageJumpForm-' + cat);
