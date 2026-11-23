@@ -357,15 +357,18 @@ function render() {
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
   const filtered = applyCategoryFilter(videos);
-  const ordered = [...filtered].sort((a, b) => sortDesc ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date));
-  const totalPages = Math.max(1, Math.ceil(ordered.length / PAGE_SIZE));
+  // Page numbers always count chronologically: page 1 = oldest batch, last page = newest batch,
+  // regardless of the Oldest/Latest toggle. The toggle only decides which end you browse from
+  // and the display order of cards within a page.
+  const oldestFirst = [...filtered].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const totalPages = Math.max(1, Math.ceil(oldestFirst.length / PAGE_SIZE));
   if (currentPage > totalPages) currentPage = totalPages;
   if (currentPage < 1) currentPage = 1;
   perCategoryPage[categoryFilter] = currentPage;
 
   const categoryLabel = categoryFilter === '3d' ? '3D videos' : categoryFilter === 'ai' ? 'AI videos' : 'videos';
-  document.getElementById('countLabel').textContent = ordered.length
-    ? `${ordered.length} ${categoryLabel} — page ${currentPage} of ${totalPages}`
+  document.getElementById('countLabel').textContent = oldestFirst.length
+    ? `${oldestFirst.length} ${categoryLabel} — page ${currentPage} of ${totalPages}`
     : 'No videos found';
 
   const pageJumpInput = document.getElementById('pageJumpInput');
@@ -374,14 +377,15 @@ function render() {
   }
   pageJumpInput.max = totalPages;
 
-  if (ordered.length === 0) {
+  if (oldestFirst.length === 0) {
     grid.innerHTML = '<div class="empty-note">No videos added yet. Edit <code>videos-data.json</code> and add your YouTube links to see them here.</div>';
     renderPagination(0);
     return;
   }
 
   const start = (currentPage - 1) * PAGE_SIZE;
-  const pageItems = ordered.slice(start, start + PAGE_SIZE);
+  let pageItems = oldestFirst.slice(start, start + PAGE_SIZE);
+  if (sortDesc) pageItems = [...pageItems].reverse();
 
   pageItems.forEach(v => {
     const id = getYouTubeId(v.url);
@@ -497,21 +501,15 @@ function renderPagination(totalPages) {
 }
 
 function setCatAndSort(cat, newSortDesc, targetPage) {
-  const sameCategory = (cat === categoryFilter);
-  const sortChanged = (newSortDesc !== sortDesc);
-
   if (targetPage) {
     // Explicit page requested (e.g. clicked a page number in a non-active group's bar).
     currentPage = targetPage;
-  } else if (sameCategory && sortChanged) {
-    // Mirror the page within the same filtered set when only sort order flips.
-    // Recompute total pages fresh (don't trust a possibly-stale global) so the mirror is always correct.
-    const freshTotalPages = Math.max(1, Math.ceil(applyCategoryFilter(videos).length / PAGE_SIZE));
-    currentPage = freshTotalPages - currentPage + 1;
-  } else if (!sameCategory) {
-    currentPage = perCategoryPage[cat] || 1;
+  } else {
+    // Page numbers are fixed chronologically (1 = oldest, last = newest), so clicking
+    // "Latest" always jumps to the last page and "Oldest" always jumps to page 1.
+    const freshTotalPages = Math.max(1, Math.ceil(applyCategoryFilter(videos, cat).length / PAGE_SIZE));
+    currentPage = newSortDesc ? freshTotalPages : 1;
   }
-  // If neither category nor sort changed (clicking the already-active button), leave page as-is.
 
   categoryFilter = cat;
   sortDesc = newSortDesc;
