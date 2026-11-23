@@ -206,6 +206,57 @@
     font-size: 16px;
     padding: 4px 8px;
   }
+  .video-card .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .video-card .meta .meta-text { flex: 1; min-width: 0; cursor: pointer; }
+  .share-btn {
+    flex-shrink: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .share-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .share-menu {
+    position: fixed;
+    z-index: 200;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px;
+    display: none;
+    flex-direction: column;
+    min-width: 170px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  .share-menu.open { display: flex; }
+  .share-menu a, .share-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 6px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 13px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+  }
+  .share-menu a:hover, .share-menu button:hover { background: var(--bg); }
 </style>
 </head>
 <body>
@@ -232,6 +283,13 @@
 
 <main class="grid" id="grid"></main>
 <nav class="pagination" id="pagination"></nav>
+
+<div class="share-menu" id="shareMenu">
+  <a id="shareWhatsapp" target="_blank" rel="noopener">💬 WhatsApp</a>
+  <a id="shareTwitter" target="_blank" rel="noopener">𝕏 Twitter / X</a>
+  <a id="shareFacebook" target="_blank" rel="noopener">📘 Facebook</a>
+  <button id="shareCopy">🔗 Copy link</button>
+</div>
 
 <footer>Built with Claude</footer>
 
@@ -283,9 +341,20 @@ function render() {
     card.appendChild(embed);
     const meta = document.createElement('div');
     meta.className = 'meta';
-    meta.innerHTML = `<h3>${v.title}</h3><p>${new Date(v.date).toLocaleDateString()}</p>`;
-    meta.style.cursor = 'pointer';
-    meta.addEventListener('click', () => showLinkBar(v.url));
+    const metaText = document.createElement('div');
+    metaText.className = 'meta-text';
+    metaText.innerHTML = `<h3>${v.title}</h3><p>${new Date(v.date).toLocaleDateString()}</p>`;
+    metaText.addEventListener('click', () => showLinkBar(v.url));
+    meta.appendChild(metaText);
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'share-btn';
+    shareBtn.textContent = '⤴';
+    shareBtn.title = 'Share';
+    shareBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openShareMenu(shareBtn, v.url, v.title);
+    });
+    meta.appendChild(shareBtn);
     card.appendChild(meta);
     grid.appendChild(card);
   });
@@ -353,6 +422,35 @@ document.getElementById('sortOldest').addEventListener('click', () => {
   document.getElementById('sortNewest').classList.remove('active');
   render();
 });
+
+function openShareMenu(anchorEl, url, title) {
+  const menu = document.getElementById('shareMenu');
+  const rect = anchorEl.getBoundingClientRect();
+  menu.style.top = (rect.bottom + 6) + 'px';
+  menu.style.left = Math.max(8, rect.right - 180) + 'px';
+  menu.classList.add('open');
+
+  const text = encodeURIComponent(title || '');
+  const link = encodeURIComponent(url);
+  document.getElementById('shareWhatsapp').href = `https://wa.me/?text=${text}%20${link}`;
+  document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?text=${text}&url=${link}`;
+  document.getElementById('shareFacebook').href = `https://www.facebook.com/sharer/sharer.php?u=${link}`;
+  document.getElementById('shareCopy').onclick = () => {
+    navigator.clipboard?.writeText(url).catch(() => {});
+    const btn = document.getElementById('shareCopy');
+    const original = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.textContent = original; }, 1200);
+  };
+
+  const closeOnOutside = (ev) => {
+    if (!menu.contains(ev.target)) {
+      menu.classList.remove('open');
+      document.removeEventListener('click', closeOnOutside);
+    }
+  };
+  setTimeout(() => document.addEventListener('click', closeOnOutside), 0);
+}
 
 function showLinkBar(url) {
   const bar = document.getElementById('linkBar');
