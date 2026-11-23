@@ -200,6 +200,15 @@
     padding: 60px 20px;
     font-size: 14px;
   }
+  .bottom-page-label {
+    text-align: center;
+    color: #f0c419;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 8px auto 10px;
+  }
   .pagination {
     display: flex;
     flex-wrap: wrap;
@@ -436,6 +445,7 @@
 
 <div class="content-area">
 <main class="grid" id="grid"></main>
+<p class="bottom-page-label" id="bottomPageLabel"></p>
 <nav class="pagination" id="pagination"></nav>
 </div>
 </div>
@@ -494,6 +504,11 @@ function render() {
   document.getElementById('countLabel').textContent = oldestFirst.length
     ? `${oldestFirst.length} ${categoryLabel} — page ${currentPage} of ${totalPages}`
     : 'No videos found';
+
+  const categoryBadge = categoryFilter === '3d' ? '3D' : categoryFilter === 'ai' ? 'AI' : 'All';
+  document.getElementById('bottomPageLabel').textContent = oldestFirst.length
+    ? `${categoryBadge} — page ${currentPage} of ${totalPages}`
+    : '';
 
   updatePageJumpInputs();
 
