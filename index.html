@@ -442,20 +442,22 @@ function renderPagination(totalPages) {
 }
 
 document.getElementById('sortNewest').addEventListener('click', () => {
+  if (sortDesc) return;
   sortDesc = true;
-  currentPage = 1;
+  currentPage = totalPagesGlobal - currentPage + 1;
   document.getElementById('sortNewest').classList.add('active');
   document.getElementById('sortOldest').classList.remove('active');
   render();
-  updateUrlPage(1);
+  updateUrlPage(currentPage);
 });
 document.getElementById('sortOldest').addEventListener('click', () => {
+  if (!sortDesc) return;
   sortDesc = false;
-  currentPage = 1;
+  currentPage = totalPagesGlobal - currentPage + 1;
   document.getElementById('sortOldest').classList.add('active');
   document.getElementById('sortNewest').classList.remove('active');
   render();
-  updateUrlPage(1);
+  updateUrlPage(currentPage);
 });
 
 function setCategoryFilter(cat) {
