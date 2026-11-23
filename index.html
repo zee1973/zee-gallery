@@ -340,14 +340,18 @@ function getYouTubeId(url) {
 const CUTOFF_VIDEO_ID = 'cxPiYux-71U'; // last 3D video in oldest-first order; everything after is AI
 let categoryFilter = 'all'; // 'all' | '3d' | 'ai'
 
-function applyCategoryFilter(list) {
-  if (categoryFilter === 'all') return list;
+function applyCategoryFilter(list, cat) {
+  cat = cat || categoryFilter;
+  if (cat === 'all') return list;
   const oldestFirst = [...list].sort((a, b) => new Date(a.date) - new Date(b.date));
   const cutoffIdx = oldestFirst.findIndex(v => getYouTubeId(v.url) === CUTOFF_VIDEO_ID);
   if (cutoffIdx === -1) return list; // cutoff video not found, don't filter
   const threeD = new Set(oldestFirst.slice(0, cutoffIdx + 1).map(v => v.url));
-  return list.filter(v => categoryFilter === '3d' ? threeD.has(v.url) : !threeD.has(v.url));
+  return list.filter(v => cat === '3d' ? threeD.has(v.url) : !threeD.has(v.url));
 }
+
+// Each category group keeps its own current page, shown in its own pagination bar.
+let perCategoryPage = { all: 1, '3d': 1, ai: 1 };
 
 function render() {
   const grid = document.getElementById('grid');
@@ -357,6 +361,7 @@ function render() {
   const totalPages = Math.max(1, Math.ceil(ordered.length / PAGE_SIZE));
   if (currentPage > totalPages) currentPage = totalPages;
   if (currentPage < 1) currentPage = 1;
+  perCategoryPage[categoryFilter] = currentPage;
 
   const categoryLabel = categoryFilter === '3d' ? '3D videos' : categoryFilter === 'ai' ? 'AI videos' : 'videos';
   document.getElementById('countLabel').textContent = ordered.length
@@ -429,16 +434,16 @@ function updateUrlPage(p) {
   window.history.replaceState({ page: p }, '', url);
 }
 
-function renderPaginationInto(nav, totalPages) {
+function renderPaginationInto(nav, totalPages, page, onPageClick) {
   nav.innerHTML = '';
   if (totalPages <= 1) return;
 
-  const addBtn = (label, page, opts = {}) => {
+  const addBtn = (label, p, opts = {}) => {
     const btn = document.createElement('button');
     btn.textContent = label;
     if (opts.active) btn.classList.add('active');
     if (opts.disabled) btn.disabled = true;
-    btn.addEventListener('click', () => goToPage(page));
+    btn.addEventListener('click', () => onPageClick(p));
     nav.appendChild(btn);
   };
   const addEllipsis = () => {
@@ -448,11 +453,11 @@ function renderPaginationInto(nav, totalPages) {
     nav.appendChild(span);
   };
 
-  addBtn('← Prev', currentPage - 1, { disabled: currentPage === 1 });
+  addBtn('← Prev', page - 1, { disabled: page === 1 });
 
   const windowSize = 2;
   const pagesToShow = new Set([1, totalPages]);
-  for (let p = currentPage - windowSize; p <= currentPage + windowSize; p++) {
+  for (let p = page - windowSize; p <= page + windowSize; p++) {
     if (p >= 1 && p <= totalPages) pagesToShow.add(p);
   }
   const sorted = [...pagesToShow].sort((a, b) => a - b);
@@ -460,36 +465,51 @@ function renderPaginationInto(nav, totalPages) {
   let prev = null;
   sorted.forEach(p => {
     if (prev !== null && p - prev > 1) addEllipsis();
-    addBtn(String(p), p, { active: p === currentPage });
+    addBtn(String(p), p, { active: p === page });
     prev = p;
   });
 
-  addBtn('Next →', currentPage + 1, { disabled: currentPage === totalPages });
+  addBtn('Next →', page + 1, { disabled: page === totalPages });
 }
 
 function renderPagination(totalPages) {
+  // Each group's own pagination bar is always visible, with its own
+  // independent page count and current page, regardless of which
+  // category is currently driving the grid below.
   ['all', '3d', 'ai'].forEach(cat => {
     const nav = document.getElementById('paginationTop-' + cat);
-    if (cat === categoryFilter) {
-      renderPaginationInto(nav, totalPages);
-    } else {
-      nav.innerHTML = '';
-    }
+    const catTotal = (cat === categoryFilter)
+      ? totalPages
+      : Math.max(1, Math.ceil(applyCategoryFilter(videos, cat).length / PAGE_SIZE));
+    let catPage = perCategoryPage[cat] || 1;
+    if (catPage > catTotal) catPage = catTotal;
+    if (catPage < 1) catPage = 1;
+    perCategoryPage[cat] = catPage;
+    renderPaginationInto(nav, catTotal, catPage, (p) => {
+      if (cat !== categoryFilter) {
+        setCatAndSort(cat, sortDesc, p);
+      } else {
+        goToPage(p);
+      }
+    });
   });
-  renderPaginationInto(document.getElementById('pagination'), totalPages);
+  renderPaginationInto(document.getElementById('pagination'), totalPages, currentPage, goToPage);
 }
 
-function setCatAndSort(cat, newSortDesc) {
+function setCatAndSort(cat, newSortDesc, targetPage) {
   const sameCategory = (cat === categoryFilter);
   const sortChanged = (newSortDesc !== sortDesc);
 
-  if (sameCategory && sortChanged) {
+  if (targetPage) {
+    // Explicit page requested (e.g. clicked a page number in a non-active group's bar).
+    currentPage = targetPage;
+  } else if (sameCategory && sortChanged) {
     // Mirror the page within the same filtered set when only sort order flips.
     // Recompute total pages fresh (don't trust a possibly-stale global) so the mirror is always correct.
     const freshTotalPages = Math.max(1, Math.ceil(applyCategoryFilter(videos).length / PAGE_SIZE));
     currentPage = freshTotalPages - currentPage + 1;
   } else if (!sameCategory) {
-    currentPage = 1;
+    currentPage = perCategoryPage[cat] || 1;
   }
   // If neither category nor sort changed (clicking the already-active button), leave page as-is.
 
