@@ -20,27 +20,43 @@
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
+  .page-layout {
+    display: flex;
+    align-items: flex-start;
+  }
   header {
-    padding: 48px 24px 24px;
-    text-align: center;
-    border-bottom: 1px solid var(--border);
+    flex: 0 0 260px;
+    width: 260px;
+    padding: 32px 18px;
+    text-align: left;
+    border-bottom: none;
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .content-area {
+    flex: 1 1 auto;
+    min-width: 0;
   }
   header h1 {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 600;
     margin: 0 0 8px;
     letter-spacing: 0.3px;
   }
   header p {
     color: var(--text-dim);
-    margin: 0 0 20px;
-    font-size: 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
   }
   .controls {
     display: flex;
-    justify-content: center;
-    gap: 10px;
+    justify-content: flex-start;
+    gap: 8px;
     flex-wrap: wrap;
+    margin-bottom: 16px;
   }
   .controls button {
     background: var(--bg-elevated);
@@ -64,6 +80,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    margin-bottom: 14px;
   }
   .page-jump input {
     width: 70px;
@@ -206,6 +223,7 @@
     margin: 24px auto 40px;
     padding: 0 24px;
   }
+  #paginationTop { margin: 24px auto 0; }
   .pagination button {
     background: var(--bg-elevated);
     border: 1px solid var(--border);
@@ -294,28 +312,47 @@
     width: 100%;
   }
   .share-menu a:hover, .share-menu button:hover { background: var(--bg); }
+
+  @media (max-width: 820px) {
+    .page-layout { flex-direction: column; }
+    header {
+      position: static;
+      height: auto;
+      width: 100%;
+      flex: none;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .controls { justify-content: center; }
+    .page-jump { justify-content: center; }
+  }
 </style>
 </head>
 <body>
 
+<div class="page-layout">
 <header>
   <h1>Zeewaqar Husnain</h1>
   <p id="countLabel">Loading…</p>
   <div class="controls">
     <button id="sortNewest" class="active">Newest first</button>
     <button id="sortOldest">Oldest first</button>
-    <form class="page-jump" id="pageJumpForm">
-      <input type="number" id="pageJumpInput" min="1" placeholder="Page #">
-      <button type="submit">Go</button>
-    </form>
   </div>
+  <form class="page-jump" id="pageJumpForm">
+    <input type="number" id="pageJumpInput" min="1" placeholder="Page #">
+    <button type="submit">Go</button>
+  </form>
   <div>
     <a class="videos-link" href="index.html">← Back to videos</a>
   </div>
 </header>
 
+<div class="content-area">
 <main class="gallery" id="gallery"></main>
 <nav class="pagination" id="pagination"></nav>
+</div>
+</div>
 
 <div class="lightbox" id="lightbox">
   <button class="close" id="lbClose">&times;</button>
