@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Featured Works — Zeewaqar Husnain</title>
+<style>
+  :root {
+    --bg: #0b0b0d;
+    --bg-elevated: #15151a;
+    --text: #f2f2f2;
+    --text-dim: #9a9aa3;
+    --accent: #d9b35b;
+    --border: #26262e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 48px 24px 60px; }
+  .back-link {
+    display: inline-block;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    margin-bottom: 24px;
+  }
+  .back-link:hover { color: #fff; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  h1 { font-size: 30px; font-weight: 700; margin: 0 0 10px; }
+  p.subtitle { color: var(--text-dim); font-size: 14.5px; max-width: 600px; line-height: 1.6; margin: 0 0 40px; }
+
+  /* ---------- GRID VIEW ---------- */
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+  }
+  .f-tile {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+  }
+  .f-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+  .f-tile:hover img { transform: scale(1.06); }
+  .f-tile .f-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 14px;
+  }
+  .f-tile .f-title {
+    color: #fff;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.3;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  }
+  .f-tile .f-play {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.85);
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: rgba(217,179,91,0.92);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.25s, transform 0.25s;
+  }
+  .f-tile:hover .f-play { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  .f-tile .f-play svg { width: 16px; height: 16px; margin-left: 2px; }
+
+  .f-placeholder {
+    aspect-ratio: 16 / 10;
+    border-radius: 14px;
+    border: 1.5px dashed var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    font-size: 12px;
+    text-align: center;
+    padding: 10px;
+  }
+
+  /* ---------- READING VIEW ---------- */
+  .reading-view { display: none; }
+  .reading-view.open { display: block; }
+  .featured-grid.hidden { display: none; }
+  .reading-top { margin-bottom: 20px; }
+  .reading-back {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 20px;
+  }
+  .reading-back:hover { color: #fff; }
+  .player-wrap {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+    margin-bottom: 28px;
+  }
+  .player-wrap iframe {
+    position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+  }
+  .reading-title { font-size: 24px; font-weight: 700; margin: 0 0 6px; }
+  .reading-divider {
+    width: 48px; height: 2px; background: var(--accent); border: none; margin: 18px 0 24px;
+  }
+  .reading-body { max-width: 680px; }
+  .reading-body p {
+    font-size: 16px;
+    line-height: 1.85;
+    color: #e4e2de;
+    margin: 0 0 20px;
+  }
+  .reading-body em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  footer { text-align: center; padding: 48px 20px 60px; color: var(--text-dim); font-size: 12px; }
+  footer p { margin: 0 0 6px; }
+  .footer-link-btn { background: none; border: none; color: var(--accent); font-size: 12px; cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
+  .footer-link-btn:hover { color: #fff; }
+  .footer-dot { margin: 0 8px; color: var(--text-dim); }
+  .legal-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 24px; }
+  .legal-modal.open { display: flex; }
+  .legal-modal-box { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; max-width: 560px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 28px 28px 24px; position: relative; }
+  .legal-modal-box h2 { margin: 0 0 14px; font-size: 18px; color: var(--accent); }
+  .legal-modal-box p { font-size: 13.5px; line-height: 1.6; color: var(--text-dim); margin: 0 0 12px; }
+  .legal-modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--text-dim); font-size: 22px; cursor: pointer; line-height: 1; }
+  .legal-modal-close:hover { color: #fff; }
+
+  .more-nav { max-width: 760px; margin: 0 auto; padding: 0 20px 10px; text-align: center; }
+  .more-nav h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin: 0 0 14px; font-weight: 700; }
+  .more-nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .more-nav-links a { display: inline-block; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-elevated); color: var(--text); text-decoration: none; font-size: 12.5px; font-weight: 600; }
+  .more-nav-links a:hover { border-color: var(--accent); color: var(--accent); }
+
+  @media (max-width: 600px) {
+    .featured-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+    .reading-title { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <a class="back-link" href="about.html">← Back to About</a>
+
+  <div id="gridHeader">
+    <span class="eyebrow">Featured Works</span>
+    <h1>A closer look</h1>
+    <p class="subtitle">A small, growing collection of pieces that get their own room — work meant to be looked at slowly, one at a time, with a few words on what they actually are.</p>
+  </div>
+
+  <div class="featured-grid" id="featuredGrid"></div>
+
+  <div class="reading-view" id="readingView">
+    <button class="reading-back" id="readingBack">← Back to Featured Works</button>
+    <div class="player-wrap">
+      <iframe id="readingPlayer" src="" title="Featured video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <h2 class="reading-title" id="readingTitle"></h2>
+    <hr class="reading-divider">
+    <div class="reading-body" id="readingBody"></div>
+  </div>
+</div>
+
+<div class="more-nav">
+  <h3>More from this channel</h3>
+  <div class="more-nav-links">
+    <a href="about.html">About this channel</a>
+    <a href="stats.html">Channel growth</a>
+    <a href="top-videos.html">Fan favorites</a>
+    <a href="insights.html">Topic insights</a>
+    <a href="timeline.html">Content timeline</a>
+    <a href="random-spotlight.html">Random spotlight</a>
+    <a href="ai-filmmaking.html">How AI filmmaking works</a>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; <span id="copyrightYear"></span> Zeewaqar Husnain. All rights reserved.</p>
+  <p class="footer-links">
+    <button type="button" class="footer-link-btn" id="openPrivacy">Privacy Policy</button>
+    <span class="footer-dot">·</span>
+    <button type="button" class="footer-link-btn" id="openDisclaimer">Disclaimer</button>
+  </p>
+</footer>
+
+<div class="legal-modal" id="legalModal">
+  <div class="legal-modal-box">
+    <button class="legal-modal-close" id="legalModalClose">&times;</button>
+    <h2 id="legalModalTitle"></h2>
+    <div id="legalModalBody"></div>
+  </div>
+</div>
+
+<script>
+document.getElementById('copyrightYear').textContent = new Date().getFullYear();
+
+const TOTAL_SLOTS = 50;
+let featuredData = [];
+
+function playIcon() {
+  return '<svg viewBox="0 0 24 24" fill="#0b0b0d"><path d="M8 5v14l11-7z"/></svg>';
+}
+
+function renderGrid() {
+  const grid = document.getElementById('featuredGrid');
+  let html = featuredData.map(item => `
+    <div class="f-tile" data-id="${item.id}">
+      <img src="${item.thumbnail}" alt="${item.title}" loading="lazy"
+           onerror="this.src='https://i.ytimg.com/vi/${item.videoId}/hqdefault.jpg'">
+      <div class="f-play">${playIcon()}</div>
+      <div class="f-overlay"><span class="f-title">${item.title}</span></div>
+    </div>
+  `).join('');
+
+  const remaining = Math.max(0, TOTAL_SLOTS - featuredData.length);
+  for (let i = 0; i < remaining; i++) {
+    html += `<div class="f-placeholder">More coming soon</div>`;
+  }
+  grid.innerHTML = html;
+
+  grid.querySelectorAll('.f-tile').forEach(tile => {
+    tile.addEventListener('click', () => openReading(tile.dataset.id));
+  });
+}
+
+function openReading(id) {
+  const item = featuredData.find(d => d.id === id);
+  if (!item) return;
+  document.getElementById('featuredGrid').classList.add('hidden');
+  document.getElementById('gridHeader').style.display = 'none';
+  document.getElementById('readingView').classList.add('open');
+  document.getElementById('readingPlayer').src = `https://www.youtube.com/embed/${item.videoId}`;
+  document.getElementById('readingTitle').textContent = item.title;
+  document.getElementById('readingBody').innerHTML = item.writeup;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function closeReading() {
+  document.getElementById('featuredGrid').classList.remove('hidden');
+  document.getElementById('gridHeader').style.display = '';
+  document.getElementById('readingView').classList.remove('open');
+  document.getElementById('readingPlayer').src = '';
+}
+document.getElementById('readingBack').addEventListener('click', closeReading);
+
+fetch('featured-data.json')
+  .then(r => r.json())
+  .then(data => {
+    featuredData = data;
+    renderGrid();
+    // If a video id is specified in the URL hash, open it directly
+    const hash = window.location.hash.replace('#', '');
+    if (hash && featuredData.some(d => d.id === hash)) openReading(hash);
+  })
+  .catch(err => {
+    document.getElementById('featuredGrid').innerHTML = '<p style="color:var(--text-dim);">Could not load featured works.</p>';
+    console.error(err);
+  });
+
+const LEGAL_CONTENT = {
+  privacy: {
+    title: 'Privacy Policy',
+    body: `
+      <p>This site displays videos and images shared by Zeewaqar Husnain. We do not require you to create an account, and we do not collect personal information such as your name, email address, or payment details through this site.</p>
+      <p>Standard technical data (such as your browser type, approximate location, and pages visited) may be collected automatically by our hosting provider for the purposes of maintaining and securing the site, as is common with most websites.</p>
+      <p>Embedded YouTube videos on this page are subject to YouTube's own separate privacy policy once playback begins.</p>
+      <p>We do not sell or share any visitor data with third parties for advertising purposes.</p>
+    `
+  },
+  disclaimer: {
+    title: 'Disclaimer',
+    body: `
+      <p>The writing accompanying each featured piece reflects one viewer's interpretation and is offered for descriptive and reflective purposes. It is not a statement of religious authority or doctrine.</p>
+      <p>Any action you take based on the content found on this site is strictly at your own risk. We will not be liable for any losses or damages in connection with the use of this site.</p>
+      <p>Links to YouTube are provided for convenience. We do not control and are not responsible for the content or practices of that external site.</p>
+    `
+  }
+};
+function openLegalModal(key) {
+  const content = LEGAL_CONTENT[key];
+  if (!content) return;
+  document.getElementById('legalModalTitle').textContent = content.title;
+  document.getElementById('legalModalBody').innerHTML = content.body;
+  document.getElementById('legalModal').classList.add('open');
+}
+function closeLegalModal() { document.getElementById('legalModal').classList.remove('open'); }
+document.getElementById('openPrivacy').addEventListener('click', () => openLegalModal('privacy'));
+document.getElementById('openDisclaimer').addEventListener('click', () => openLegalModal('disclaimer'));
+document.getElementById('legalModalClose').addEventListener('click', closeLegalModal);
+document.getElementById('legalModal').addEventListener('click', (e) => { if (e.target.id === 'legalModal') closeLegalModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLegalModal(); });
+</script>
+
+</body>
+</html>
