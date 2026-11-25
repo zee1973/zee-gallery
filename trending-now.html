@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trending Now in AI Filmmaking — Zeewaqar Husnain</title>
+<style>
+  :root {
+    --bg: #0b0b0d;
+    --bg-elevated: #15151a;
+    --text: #f2f2f2;
+    --text-dim: #9a9aa3;
+    --accent: #d9b35b;
+    --border: #26262e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 48px 24px 60px; }
+  .back-link {
+    display: block;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    margin-bottom: 6px;
+  }
+  .back-link:hover { color: #fff; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 24px 0 10px;
+  }
+  h1 { font-size: 30px; font-weight: 700; margin: 0 0 10px; }
+  p.subtitle { color: var(--text-dim); font-size: 14.5px; max-width: 640px; line-height: 1.6; margin: 0 0 16px; }
+  .updated-note { color: var(--text-dim); font-size: 12px; margin-bottom: 40px; }
+
+  h2.section-title {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  p.section-sub { color: var(--text-dim); font-size: 13.5px; margin: 0 0 20px; }
+
+  .trend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .trend-card {
+    display: block;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .trend-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .trend-thumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    overflow: hidden;
+  }
+  .trend-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .trend-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(217,179,91,0.92);
+    color: #0b0b0d;
+    font-size: 10.5px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+  .trend-body { padding: 12px 14px 14px; }
+  .trend-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .trend-meta {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  footer { text-align: center; padding: 48px 20px 60px; color: var(--text-dim); font-size: 12px; }
+  footer p { margin: 0 0 6px; }
+  .footer-link-btn { background: none; border: none; color: var(--accent); font-size: 12px; cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
+  .footer-link-btn:hover { color: #fff; }
+  .footer-dot { margin: 0 8px; color: var(--text-dim); }
+  .legal-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 24px; }
+  .legal-modal.open { display: flex; }
+  .legal-modal-box { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; max-width: 560px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 28px 28px 24px; position: relative; }
+  .legal-modal-box h2 { margin: 0 0 14px; font-size: 18px; color: var(--accent); }
+  .legal-modal-box p { font-size: 13.5px; line-height: 1.6; color: var(--text-dim); margin: 0 0 12px; }
+  .legal-modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--text-dim); font-size: 22px; cursor: pointer; line-height: 1; }
+  .legal-modal-close:hover { color: #fff; }
+
+  .more-nav { max-width: 760px; margin: 0 auto; padding: 0 20px 10px; text-align: center; }
+  .more-nav h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin: 0 0 14px; font-weight: 700; }
+  .more-nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .more-nav-links a { display: inline-block; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-elevated); color: var(--text); text-decoration: none; font-size: 12.5px; font-weight: 600; }
+  .more-nav-links a:hover { border-color: var(--accent); color: var(--accent); }
+
+  @media (max-width: 600px) {
+    .trend-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <a class="back-link" href="index.html">← Back to videos</a>
+  <a class="back-link" href="about.html">← Back to About</a>
+
+  <span class="eyebrow" style="margin-top:24px;">Trending Now</span>
+  <h1>What's moving in AI filmmaking right now</h1>
+  <p class="subtitle">A snapshot of what's currently gaining traction in AI short films and AI commercials across YouTube — useful if you want to see where the craft is heading, or just want something good to watch next.</p>
+  <p class="updated-note">Snapshot taken November 25, 2026 · data via vidIQ</p>
+
+  <h2 class="section-title">🎬 Trending AI Short Films</h2>
+  <p class="section-sub">Ranked by views gained in the most recent hour measured — what's picking up speed right now.</p>
+  <div class="trend-grid" id="shortFilmsGrid"></div>
+
+  <h2 class="section-title">📈 Breakout AI Commercials &amp; Workflows</h2>
+  <p class="section-sub">Videos performing far above their channel's usual average — the ones punching above their weight.</p>
+  <div class="trend-grid" id="commercialsGrid"></div>
+</div>
+
+<div class="more-nav">
+  <h3>More from this channel</h3>
+  <div class="more-nav-links">
+    <a href="about.html">📖 About this channel</a>
+    <a href="featured.html">✦ Featured Works</a>
+    <a href="stats.html">📈 Channel growth</a>
+    <a href="top-videos.html">⭐ Fan favorites</a>
+    <a href="insights.html">🧩 Topic insights</a>
+    <a href="timeline.html">🕒 Content timeline</a>
+    <a href="random-spotlight.html">🎲 Random spotlight</a>
+    <a href="ai-filmmaking.html">🎬 How AI filmmaking works</a>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; <span id="copyrightYear"></span> Zeewaqar Husnain. All rights reserved.</p>
+  <p class="footer-links">
+    <button type="button" class="footer-link-btn" id="openPrivacy">Privacy Policy</button>
+    <span class="footer-dot">·</span>
+    <button type="button" class="footer-link-btn" id="openDisclaimer">Disclaimer</button>
+  </p>
+</footer>
+
+<div class="legal-modal" id="legalModal">
+  <div class="legal-modal-box">
+    <button class="legal-modal-close" id="legalModalClose">&times;</button>
+    <h2 id="legalModalTitle"></h2>
+    <div id="legalModalBody"></div>
+  </div>
+</div>
+
+<script>
+document.getElementById('copyrightYear').textContent = new Date().getFullYear();
+
+const shortFilms = [
+  { id: "jzB916_jT7o", title: "LANA AND THE DEER | AI Horror Short Film, Parts 1–13", channel: "noir hollows", views: "175.5K views" },
+  { id: "54P4v4nTm9c", title: "I Made a 5-Minute AI Short Film From One Idea (OpenArt Director)", channel: "Flash Cash", views: "15.3K views" },
+  { id: "Xdjh6Ir2RAw", title: "DAY ONE | Sci-Fi Short Film #HiggsfieldTalentContest", channel: "URAD", views: "59.7K views" },
+  { id: "3_8ibLIBeVs", title: "AI Short Film: \"Swamp Witch\" | Folk Horror", channel: "AI Video School", views: "59.2K views" },
+  { id: "IQtFp2euyY0", title: "until it's done | AI Short Film about Superintelligence", channel: "Paweł Zawadzki", views: "5.1K views" },
+  { id: "oh0KJxNqjK8", title: "RAGNAROK ONLINE | Cinematic AI Film – Part 9: A Clash of Pride", channel: "SHid Films", views: "66.4K views" },
+  { id: "9vg-k1sUZYI", title: "EMBERFALL 2 — The Ash Remembers (Part 1) | AI Film", channel: "Frames from the Future", views: "103.5K views" },
+  { id: "OXiVtHaUHz0", title: "After World War III: 10,000 Sleepers Woke Up in an AI City", channel: "Studio Novaris", views: "47.3K views" },
+];
+
+const commercials = [
+  { id: "7FjbGrBvKnQ", title: "How to Make Studio-Quality AI Commercials in 4K (Full Guide)", channel: "Jack Vs. AI", views: "28.9K views" },
+  { id: "xzwV3VdMPxk", title: "Stop Making \"AI Videos.\" Start Making Commercials.", channel: "Ľudovít Nastišin", views: "66.8K views" },
+  { id: "8FD8M7jhX20", title: "Complete AI Filmmaking Workflow - From Concept to Film", channel: "FRMWRKD-EXPLAINED", views: "17.6K views" },
+  { id: "3rDs6FhFoUQ", title: "3-Step Workflow To Make Ultra-Realistic AI Ads", channel: "Higgsfield AI", views: "784K views" },
+  { id: "51f28glg5v0", title: "100% FREE AI TOOLS — Create Realistic UGC Adverts With AI", channel: "SHABA STUDIO", views: "4.4K views" },
+  { id: "tL6c3K7qmKA", title: "I Made a Cinematic McDonald's Commercial With AI", channel: "JAYCEE LAB", views: "1.1K views" },
+  { id: "t6QiS_EN8ZQ", title: "I Made a Real Commercial With AI | Watch This", channel: "Khalid", views: "1.3K views" },
+  { id: "N42QhRFwvG8", title: "Seedance 2.0 AI Video Generator – Step-by-Step Tutorial", channel: "Kingsway Collins", views: "6K views" },
+];
+
+function renderGrid(containerId, items, badge) {
+  const grid = document.getElementById(containerId);
+  grid.innerHTML = items.map(v => `
+    <a class="trend-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">
+      <div class="trend-thumb">
+        <span class="trend-badge">${badge}</span>
+        <img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="${v.title}" loading="lazy"
+             onerror="this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'">
+      </div>
+      <div class="trend-body">
+        <p class="trend-title">${v.title}</p>
+        <div class="trend-meta"><span>${v.channel}</span><span>${v.views}</span></div>
+      </div>
+    </a>
+  `).join('');
+}
+
+renderGrid('shortFilmsGrid', shortFilms, 'TRENDING');
+renderGrid('commercialsGrid', commercials, 'BREAKOUT');
+
+const LEGAL_CONTENT = {
+  privacy: {
+    title: 'Privacy Policy',
+    body: `
+      <p>This site displays videos and images shared by Zeewaqar Husnain. We do not require you to create an account, and we do not collect personal information such as your name, email address, or payment details through this site.</p>
+      <p>Standard technical data (such as your browser type, approximate location, and pages visited) may be collected automatically by our hosting provider for the purposes of maintaining and securing the site, as is common with most websites.</p>
+      <p>This page links to videos hosted on YouTube. Clicking through is subject to YouTube's own separate privacy policy.</p>
+      <p>We do not sell or share any visitor data with third parties for advertising purposes.</p>
+    `
+  },
+  disclaimer: {
+    title: 'Disclaimer',
+    body: `
+      <p>The videos linked on this page are not created by Zeewaqar Husnain and belong to their respective channels and creators. They are shared here purely as informational pointers to what is currently trending in the AI filmmaking space.</p>
+      <p>Trend data and view counts reflect a snapshot taken at the time this page was last updated and may no longer be current.</p>
+      <p>Any action you take based on the content found on this site is strictly at your own risk. We will not be liable for any losses or damages in connection with the use of this site.</p>
+    `
+  }
+};
+function openLegalModal(key) {
+  const content = LEGAL_CONTENT[key];
+  if (!content) return;
+  document.getElementById('legalModalTitle').textContent = content.title;
+  document.getElementById('legalModalBody').innerHTML = content.body;
+  document.getElementById('legalModal').classList.add('open');
+}
+function closeLegalModal() { document.getElementById('legalModal').classList.remove('open'); }
+document.getElementById('openPrivacy').addEventListener('click', () => openLegalModal('privacy'));
+document.getElementById('openDisclaimer').addEventListener('click', () => openLegalModal('disclaimer'));
+document.getElementById('legalModalClose').addEventListener('click', closeLegalModal);
+document.getElementById('legalModal').addEventListener('click', (e) => { if (e.target.id === 'legalModal') closeLegalModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLegalModal(); });
+</script>
+
+</body>
+</html>
